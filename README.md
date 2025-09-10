@@ -1,3 +1,28 @@
+# Rama
+
+## Morfosis / FFMPEG converter
+> batch video/audio convertion powered by ffmpeg
+platform: f-droid and google play
+
+## Tijera / FFMPEG editor
+> small video editor that allows you to clip and convert a video or a song powered by ffmpeg
+platform: f-droid, google play, linux mint
+
+## Palomita / offline Audio/Video player
+> the logo is a popcorm pigeon mix
+
+## (no name) Downloader
+> small app that allows you to download youtube videos into your device
+platform: f-droid, google play, linux mint
+------------------------------------------------------------
+
+## Deps for builidng in Linux
+```sh
+sudo apt update && sudo apt install libsdl2-dev
+```
+
+----------------------------------------------------------
+
 # morfosis
 
 A new Flutter project.
