@@ -4,6 +4,129 @@ void main() {
   runApp(const MorfosisApp());
 }
 
+const Color bgColor = Color(0xff364245);
+const Color bgColor2 = Color(0xff364852);
+const Color actionColor = Color(0xff467f68);
+const Color dangerColor = Color(0xffff8080);
+const Color foregroundColor = Color(0xffcccccc);
+
+class CodeInput extends StatelessWidget {
+  final String output;
+
+  const CodeInput({super.key, required this.output});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Color(0xff242b2f),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Text(output, style: TextStyle(color: Color(0xffffe23e))),
+    );
+  }
+}
+
+class PromptOutput extends StatelessWidget {
+  final String output;
+
+  const PromptOutput({super.key, required this.output});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Color(0xff382929),
+        border: Border.all(color: Color(0xffa13030)),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Text(output, style: TextStyle(color: Color(0xffffa5aa))),
+    );
+  }
+}
+
+class ListItem extends StatelessWidget {
+  final int id;
+  final String path;
+  final String output;
+
+  const ListItem({
+    super.key,
+    required this.id,
+    required this.path,
+    required this.output,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: bgColor2,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(path, style: TextStyle(color: foregroundColor, fontSize: 22)),
+          const SizedBox(height: 8), // instead of spacing
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xff4b7076),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text('100%', style: TextStyle(color: foregroundColor)),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 12, 141, 141),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text('avi', style: TextStyle(color: foregroundColor)),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xff1279b1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(output, style: TextStyle(color: foregroundColor)),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                decoration: BoxDecoration(
+                  color: dangerColor,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.delete),
+                  tooltip: 'Delete Item',
+                  color: foregroundColor,
+                  onPressed: () {},
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class MorfosisApp extends StatefulWidget {
   const MorfosisApp({super.key});
 
@@ -12,12 +135,6 @@ class MorfosisApp extends StatefulWidget {
 }
 
 class _MorfosisAppState extends State<MorfosisApp> {
-  static const Color bgColor = Color(0xff364245);
-  static const Color bgColor2 = Color(0xff364852);
-  static const Color actionColor = Color(0xff467f68);
-  static const Color dangerColor = Color(0xffff8080);
-  static const Color foregroundColor = Color(0xffcccccc);
-
   final PageController _pageController = PageController();
   int _currentIndex = 0;
 
@@ -102,115 +219,13 @@ class _MorfosisAppState extends State<MorfosisApp> {
                     ),
                   ),
 
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    width: double.infinity,
-                    margin: const EdgeInsets.only(bottom: 16),
-                    decoration: BoxDecoration(
-                      color: Color(0xff242b2f),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      'ffmpeg -i * -o *',
-                      style: TextStyle(color: Color(0xffffe23e)),
-                    ),
-                  ),
+                  CodeInput(output: 'ffmpeg -i * -o *'),
+                  PromptOutput(output: 'error'),
 
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    width: double.infinity,
-                    margin: const EdgeInsets.only(bottom: 16),
-                    decoration: BoxDecoration(
-                      color: Color(0xff382929),
-                      border: Border.all(color: Color(0xffa13030)),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      'Some warning here',
-                      style: TextStyle(color: Color(0xffffa5aa)),
-                    ),
-                  ),
-
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: bgColor2,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      spacing: 8,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Long File Name',
-                          style: TextStyle(
-                            color: foregroundColor,
-                            fontSize: 22,
-                          ),
-                        ),
-                        Row(
-                          spacing: 8,
-                          children: [
-                            Expanded(
-                              child: Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: Color(0xff4b7076),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Text(
-                                  '100%',
-                                  style: TextStyle(
-                                    color: foregroundColor,
-                                    // fontSize: 22,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Color.fromARGB(255, 12, 141, 141),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Text(
-                                'avi',
-                                style: TextStyle(
-                                  color: foregroundColor,
-                                  // fontSize: 22,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Color(0xff1279b1),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Text(
-                                'mp4',
-                                style: TextStyle(
-                                  color: foregroundColor,
-                                  // fontSize: 22,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: dangerColor,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: IconButton(
-                                icon: const Icon(Icons.delete),
-                                tooltip: 'Delete Item',
-                                color: foregroundColor,
-                                onPressed: deleteItem,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                  ListItem(
+                    path: 'cumpleaños alejando.avi',
+                    id: 4,
+                    output: 'mp4',
                   ),
                 ],
               ),
@@ -221,17 +236,17 @@ class _MorfosisAppState extends State<MorfosisApp> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
-                    'Settings',
-                    style: TextStyle(color: Colors.white, fontSize: 22),
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    child: Text(
+                      'Settings',
+                      style: TextStyle(color: foregroundColor, fontSize: 28),
+                    ),
                   ),
-                  SizedBox(height: 12),
-                  Text(
-                    'ffmpeg -i * -o *',
-                    style: TextStyle(color: Colors.orange),
-                  ),
-                  SizedBox(height: 12),
+
+                  CodeInput(output: 'ffmpeg -i * -o *'),
+                  PromptOutput(output: 'error'),
                   Text('Change Format', style: TextStyle(color: Colors.white)),
                 ],
               ),
