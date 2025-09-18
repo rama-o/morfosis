@@ -23,6 +23,12 @@ sudo apt update && sudo apt install libsdl2-dev
 
 ----------------------------------------------------------
 
+to run the app
+```
+flutter run
+```
+
+
 # morfosis
 
 A new Flutter project.
