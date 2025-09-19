@@ -13,6 +13,107 @@ const Color foregroundColor = Color(0xffcccccc);
 const Color uncheckedColor = Color(0xFF386A68);
 const Color checkedColor = Color(0xFF689896);
 
+
+// transition
+final ValueNotifier<String?> outputFormatNotifier = ValueNotifier<String?>(
+  'mp4',
+);
+
+class UiSettings {
+  bool changeFormat;
+  String outputFormat;
+
+  bool changeVideoCodec;
+  String videoCodec;
+
+  bool changeAudioCodec;
+  String audioCodec;
+
+  bool changeOutput;
+  String outputPrefix;
+  String outputSuffix;
+
+  UiSettings({
+    this.changeFormat = true,
+    this.outputFormat = 'mp4',
+    this.changeVideoCodec = true,
+    this.videoCodec = 'libx264',
+    this.changeAudioCodec = true,
+    this.audioCodec = 'aac',
+    this.changeOutput = true,
+    this.outputPrefix = '',
+    this.outputSuffix = '',
+  });
+
+  UiSettings copyWith({
+    bool? changeFormat,
+    String? outputFormat,
+    bool? changeVideoCodec,
+    String? videoCodec,
+    bool? changeAudioCodec,
+    String? audioCodec,
+    bool? changeOutput,
+    String? outputPrefix,
+    String? outputSuffix,
+  }) {
+    return UiSettings(
+      changeFormat: changeFormat ?? this.changeFormat,
+      outputFormat: outputFormat ?? this.outputFormat,
+      changeVideoCodec: changeVideoCodec ?? this.changeVideoCodec,
+      videoCodec: videoCodec ?? this.videoCodec,
+      changeAudioCodec: changeAudioCodec ?? this.changeAudioCodec,
+      audioCodec: audioCodec ?? this.audioCodec,
+      changeOutput: changeOutput ?? this.changeOutput,
+      outputPrefix: outputPrefix ?? this.outputPrefix,
+      outputSuffix: outputSuffix ?? this.outputSuffix,
+    );
+  }
+}
+
+// final ValueNotifier<UiSettings> settingsNotifier =
+//     ValueNotifier(UiSettings());
+
+// {
+//   changeFormat: true,
+//   outputFormat: 'mp4',
+//   changeVideoCodec: true,
+//   videoCodec: 'libx264',
+//   changeAudioCodec: true,
+//   audioCodec: 'acc',
+//   changeOutput: true,
+//   outputPrefix: '',
+//   outputSuffix: '',
+// };
+
+const formatList = [
+  'mp4',
+  'avi',
+  'webm',
+  'wmv',
+  'mpeg',
+  'ogg',
+  'mp3',
+  'm4a',
+  'wav',
+  'wma',
+  'flac',
+];
+
+const videoCodecList = [
+  'libx264',
+];
+
+const audioCodecList = [
+  'acc',
+  'ac3',
+  'mp3lame',
+];
+
+// final ValueNotifier<String?> outputFormatNotifier = ValueNotifier<String?>(
+//   'mp4',
+// );
+
+
 class SectionTitle extends StatelessWidget {
   final String label;
 
@@ -59,32 +160,70 @@ class CustomBtn extends StatelessWidget {
 
 class CustomRadio extends StatelessWidget {
   final String value;
-  final String? groupValue;
-  final ValueChanged<String?> onChanged;
+  final ValueNotifier<String?> groupNotifier;
 
   const CustomRadio({
     super.key,
     required this.value,
-    required this.groupValue,
-    required this.onChanged,
+    required this.groupNotifier,
   });
 
   @override
   Widget build(BuildContext context) {
-    return RadioListTile<String>(
-      title: Text(value, style: TextStyle(color: foregroundColor)),
-      value: value,
-      groupValue: groupValue,
-      onChanged: onChanged,
-      fillColor: MaterialStateProperty.resolveWith<Color>((states) {
-        if (states.contains(MaterialState.selected)) {
-          return checkedColor;
-        }
-        return uncheckedColor;
-      }),
+    return ValueListenableBuilder<String?>(
+      valueListenable: groupNotifier,
+      builder: (context, groupValue, _) {
+        return RadioListTile<String>(
+          title: Text(value, style: TextStyle(color: foregroundColor)),
+          value: value,
+          groupValue: groupValue,
+          onChanged: (val) {
+            groupNotifier.value = val;
+          },
+          fillColor: MaterialStateProperty.resolveWith<Color>((states) {
+            if (states.contains(MaterialState.selected)) return checkedColor;
+            return uncheckedColor;
+          }),
+        );
+      },
     );
   }
 }
+
+// class CustomCheckbox extends StatelessWidget {
+//   final String value;
+//   final  String label;
+//   // final ValueNotifier<String?> groupNotifier;
+
+//   const CustomCheckbox({
+//     super.key,
+//     required this.value,
+//     required this.label,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return ValueListenableBuilder<String?>(
+//       valueListenable: groupNotifier,
+//       builder: (context, groupValue, _) {
+//         return CheckboxListTile<String>(
+//           title: Text(label, style: TextStyle(color: foregroundColor)),
+//           value: value,
+//           onChanged: (val) {
+//             groupNotifier.value = val;
+//           },
+//           fillColor: MaterialStateProperty.resolveWith<Color>((states) {
+//             if (states.contains(MaterialState.selected)) {
+//               return checkedColor;
+//             }
+//             return uncheckedColor;
+//           }),
+//           activeColor: checkedColor,
+//         );
+//       },
+//     );
+//   }
+// }
 
 class CodeInput extends StatelessWidget {
   final String output;
@@ -227,10 +366,9 @@ class _MorfosisAppState extends State<MorfosisApp> {
 
   int currentViewIndex = 0;
   bool changeFormat = true;
-  String? outputFormat = 'mp4';
 
   String comando = 'ffmpeg -i * -o *';
-  List<String> errors = ['errorcito', 'feito'];
+  List<String> errors = [];
 
   void navigateTo(int index) {
     setState(() => currentViewIndex = index);
@@ -288,7 +426,8 @@ class _MorfosisAppState extends State<MorfosisApp> {
                   ),
 
                   CodeInput(output: comando),
-                  PromptOutput(output: errors),
+
+                  if (!errors.isEmpty) PromptOutput(output: errors),
 
                   ListItem(
                     path: 'cumpleaños alejando.wmv',
@@ -327,28 +466,46 @@ class _MorfosisAppState extends State<MorfosisApp> {
                   ),
 
                   CodeInput(output: comando),
-                  PromptOutput(output: errors),
+                  if (!errors.isEmpty) PromptOutput(output: errors),
 
-                  CheckboxListTile(
-                    title: Text(
-                      'Change Format',
-                      style: TextStyle(color: foregroundColor),
+                  // CheckboxListTile(
+                  //   title: Text(
+                  //     'Change Format',
+                  //     style: TextStyle(color: foregroundColor),
+                  //   ),
+                  //   value: false,
+                  //   onChanged: (bool? value) {
+                  //     setState(() {
+                  //       changeFormat = value!;
+                  //     });
+                  //   },
+                  //   fillColor: MaterialStateProperty.resolveWith<Color>((
+                  //     states,
+                  //   ) {
+                  //     if (states.contains(MaterialState.selected)) {
+                  //       return checkedColor;
+                  //     }
+                  //     return uncheckedColor;
+                  //   }),
+                  //   activeColor: checkedColor,
+                  // ),
+
+                  // CustomCheckbox(label: 'Change Format', value: false),
+
+                  Container(
+                    decoration: BoxDecoration(
+                      color: bgColor2,
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    value: false,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        changeFormat = value!;
-                      });
-                    },
-                    fillColor: MaterialStateProperty.resolveWith<Color>((
-                      states,
-                    ) {
-                      if (states.contains(MaterialState.selected)) {
-                        return checkedColor; // when checked
-                      }
-                      return uncheckedColor; // when unchecked
-                    }),
-                    activeColor: checkedColor, // fallback for older versions
+                    child: Column(
+                      spacing: 8,
+                      children: formatList.map<Widget>((format) => 
+                        CustomRadio(
+                          groupNotifier: outputFormatNotifier,
+                          value: format,
+                        ),
+                        ).toList(),
+                    ),
                   ),
 
                   Container(
@@ -360,22 +517,8 @@ class _MorfosisAppState extends State<MorfosisApp> {
                       spacing: 8,
                       children: [
                         CustomRadio(
-                          groupValue: outputFormat,
-                          value: 'mp4',
-                          onChanged: (String? value) {
-                            setState(() {
-                              outputFormat = value;
-                            });
-                          },
-                        ),
-                         CustomRadio(
-                          groupValue: outputFormat,
-                          value: 'avi',
-                          onChanged: (String? value) {
-                            setState(() {
-                              outputFormat = value;
-                            });
-                          },
+                          groupNotifier: outputFormatNotifier,
+                          value: 'libx264',
                         ),
                       ],
                     ),
