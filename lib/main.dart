@@ -10,6 +10,8 @@ const Color bgColor2 = Color(0xff364852);
 const Color actionColor = Color(0xff467f68);
 const Color dangerColor = Color(0xffff8080);
 const Color foregroundColor = Color(0xffcccccc);
+const Color uncheckedColor = Color(0xFF386A68);
+const Color checkedColor = Color(0xFF689896);
 
 class SectionTitle extends StatelessWidget {
   final String label;
@@ -51,6 +53,35 @@ class CustomBtn extends StatelessWidget {
         color: fg,
         onPressed: action,
       ),
+    );
+  }
+}
+
+class CustomRadio extends StatelessWidget {
+  final String value;
+  final String? groupValue;
+  final ValueChanged<String?> onChanged;
+
+  const CustomRadio({
+    super.key,
+    required this.value,
+    required this.groupValue,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return RadioListTile<String>(
+      title: Text(value, style: TextStyle(color: foregroundColor)),
+      value: value,
+      groupValue: groupValue,
+      onChanged: onChanged,
+      fillColor: MaterialStateProperty.resolveWith<Color>((states) {
+        if (states.contains(MaterialState.selected)) {
+          return checkedColor;
+        }
+        return uncheckedColor;
+      }),
     );
   }
 }
@@ -193,12 +224,16 @@ class MorfosisApp extends StatefulWidget {
 
 class _MorfosisAppState extends State<MorfosisApp> {
   final PageController _pageController = PageController();
-  int currentIndex = 0;
+
+  int currentViewIndex = 0;
+  bool changeFormat = true;
+  String? outputFormat = 'mp4';
+
   String comando = 'ffmpeg -i * -o *';
   List<String> errors = ['errorcito', 'feito'];
 
   void navigateTo(int index) {
-    setState(() => currentIndex = index);
+    setState(() => currentViewIndex = index);
     _pageController.jumpToPage(index);
   }
 
@@ -215,7 +250,7 @@ class _MorfosisAppState extends State<MorfosisApp> {
         body: PageView(
           controller: _pageController,
           onPageChanged: (index) {
-            setState(() => currentIndex = index);
+            setState(() => currentViewIndex = index);
           },
           children: [
             SingleChildScrollView(
@@ -294,18 +329,57 @@ class _MorfosisAppState extends State<MorfosisApp> {
                   CodeInput(output: comando),
                   PromptOutput(output: errors),
 
-                  Checkbox(
-                    checkColor: Colors.white,
-                    // fillColor: Colors.teal,
+                  CheckboxListTile(
+                    title: Text(
+                      'Change Format',
+                      style: TextStyle(color: foregroundColor),
+                    ),
                     value: false,
                     onChanged: (bool? value) {
                       setState(() {
-                        // isChecked = value!;
+                        changeFormat = value!;
                       });
                     },
+                    fillColor: MaterialStateProperty.resolveWith<Color>((
+                      states,
+                    ) {
+                      if (states.contains(MaterialState.selected)) {
+                        return checkedColor; // when checked
+                      }
+                      return uncheckedColor; // when unchecked
+                    }),
+                    activeColor: checkedColor, // fallback for older versions
                   ),
 
-                  Text('Change Format', style: TextStyle(color: Colors.white)),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: bgColor2,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      spacing: 8,
+                      children: [
+                        CustomRadio(
+                          groupValue: outputFormat,
+                          value: 'mp4',
+                          onChanged: (String? value) {
+                            setState(() {
+                              outputFormat = value;
+                            });
+                          },
+                        ),
+                         CustomRadio(
+                          groupValue: outputFormat,
+                          value: 'avi',
+                          onChanged: (String? value) {
+                            setState(() {
+                              outputFormat = value;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
