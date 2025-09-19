@@ -13,12 +13,6 @@ const Color foregroundColor = Color(0xffcccccc);
 const Color uncheckedColor = Color(0xFF386A68);
 const Color checkedColor = Color(0xFF689896);
 
-
-// transition
-final ValueNotifier<String?> outputFormatNotifier = ValueNotifier<String?>(
-  'mp4',
-);
-
 class UiSettings {
   bool changeFormat;
   String outputFormat;
@@ -39,7 +33,7 @@ class UiSettings {
     this.changeVideoCodec = true,
     this.videoCodec = 'libx264',
     this.changeAudioCodec = true,
-    this.audioCodec = 'aac',
+    this.audioCodec = 'ac3',
     this.changeOutput = true,
     this.outputPrefix = '',
     this.outputSuffix = '',
@@ -70,20 +64,7 @@ class UiSettings {
   }
 }
 
-// final ValueNotifier<UiSettings> settingsNotifier =
-//     ValueNotifier(UiSettings());
-
-// {
-//   changeFormat: true,
-//   outputFormat: 'mp4',
-//   changeVideoCodec: true,
-//   videoCodec: 'libx264',
-//   changeAudioCodec: true,
-//   audioCodec: 'acc',
-//   changeOutput: true,
-//   outputPrefix: '',
-//   outputSuffix: '',
-// };
+final ValueNotifier<UiSettings> settingsNotifier = ValueNotifier(UiSettings());
 
 const formatList = [
   'mp4',
@@ -99,20 +80,9 @@ const formatList = [
   'flac',
 ];
 
-const videoCodecList = [
-  'libx264',
-];
+const videoCodecList = ['libx264'];
 
-const audioCodecList = [
-  'acc',
-  'ac3',
-  'mp3lame',
-];
-
-// final ValueNotifier<String?> outputFormatNotifier = ValueNotifier<String?>(
-//   'mp4',
-// );
-
+const audioCodecList = ['acc', 'ac3', 'mp3lame'];
 
 class SectionTitle extends StatelessWidget {
   final String label;
@@ -160,25 +130,30 @@ class CustomBtn extends StatelessWidget {
 
 class CustomRadio extends StatelessWidget {
   final String value;
-  final ValueNotifier<String?> groupNotifier;
+  final String Function(UiSettings) selector;
+  final UiSettings Function(UiSettings, String) updater;
 
   const CustomRadio({
     super.key,
     required this.value,
-    required this.groupNotifier,
+    required this.selector,
+    required this.updater,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<String?>(
-      valueListenable: groupNotifier,
-      builder: (context, groupValue, _) {
+    return ValueListenableBuilder<UiSettings>(
+      valueListenable: settingsNotifier,
+      builder: (context, settings, _) {
+        final groupValue = selector(settings);
         return RadioListTile<String>(
           title: Text(value, style: TextStyle(color: foregroundColor)),
           value: value,
           groupValue: groupValue,
           onChanged: (val) {
-            groupNotifier.value = val;
+            if (val != null) {
+              settingsNotifier.value = updater(settings, val);
+            }
           },
           fillColor: MaterialStateProperty.resolveWith<Color>((states) {
             if (states.contains(MaterialState.selected)) return checkedColor;
@@ -190,40 +165,42 @@ class CustomRadio extends StatelessWidget {
   }
 }
 
-// class CustomCheckbox extends StatelessWidget {
-//   final String value;
-//   final  String label;
-//   // final ValueNotifier<String?> groupNotifier;
+class CustomCheckbox extends StatelessWidget {
+  final String label;
+  final bool Function(UiSettings) selector;
+  final UiSettings Function(UiSettings, bool) updater;
 
-//   const CustomCheckbox({
-//     super.key,
-//     required this.value,
-//     required this.label,
-//   });
+  const CustomCheckbox({
+    super.key,
+    required this.label,
+    required this.selector,
+    required this.updater,
+  });
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return ValueListenableBuilder<String?>(
-//       valueListenable: groupNotifier,
-//       builder: (context, groupValue, _) {
-//         return CheckboxListTile<String>(
-//           title: Text(label, style: TextStyle(color: foregroundColor)),
-//           value: value,
-//           onChanged: (val) {
-//             groupNotifier.value = val;
-//           },
-//           fillColor: MaterialStateProperty.resolveWith<Color>((states) {
-//             if (states.contains(MaterialState.selected)) {
-//               return checkedColor;
-//             }
-//             return uncheckedColor;
-//           }),
-//           activeColor: checkedColor,
-//         );
-//       },
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<UiSettings>(
+      valueListenable: settingsNotifier,
+      builder: (context, settings, _) {
+        final checked = selector(settings);
+        return CheckboxListTile(
+          title: Text(label, style: TextStyle(color: foregroundColor)),
+          value: checked,
+          onChanged: (val) {
+            if (val != null) {
+              settingsNotifier.value = updater(settings, val);
+            }
+          },
+          fillColor: MaterialStateProperty.resolveWith<Color>((states) {
+            if (states.contains(MaterialState.selected)) return checkedColor;
+            return uncheckedColor;
+          }),
+          activeColor: checkedColor,
+        );
+      },
+    );
+  }
+}
 
 class CodeInput extends StatelessWidget {
   final String output;
@@ -468,44 +445,11 @@ class _MorfosisAppState extends State<MorfosisApp> {
                   CodeInput(output: comando),
                   if (!errors.isEmpty) PromptOutput(output: errors),
 
-                  // CheckboxListTile(
-                  //   title: Text(
-                  //     'Change Format',
-                  //     style: TextStyle(color: foregroundColor),
-                  //   ),
-                  //   value: false,
-                  //   onChanged: (bool? value) {
-                  //     setState(() {
-                  //       changeFormat = value!;
-                  //     });
-                  //   },
-                  //   fillColor: MaterialStateProperty.resolveWith<Color>((
-                  //     states,
-                  //   ) {
-                  //     if (states.contains(MaterialState.selected)) {
-                  //       return checkedColor;
-                  //     }
-                  //     return uncheckedColor;
-                  //   }),
-                  //   activeColor: checkedColor,
-                  // ),
-
-                  // CustomCheckbox(label: 'Change Format', value: false),
-
-                  Container(
-                    decoration: BoxDecoration(
-                      color: bgColor2,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      spacing: 8,
-                      children: formatList.map<Widget>((format) => 
-                        CustomRadio(
-                          groupNotifier: outputFormatNotifier,
-                          value: format,
-                        ),
-                        ).toList(),
-                    ),
+                  CustomCheckbox(
+                    label: "Change Format",
+                    selector: (settings) => settings.changeFormat,
+                    updater: (settings, val) =>
+                        settings.copyWith(changeFormat: val),
                   ),
 
                   Container(
@@ -514,13 +458,62 @@ class _MorfosisAppState extends State<MorfosisApp> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Column(
-                      spacing: 8,
-                      children: [
-                        CustomRadio(
-                          groupNotifier: outputFormatNotifier,
-                          value: 'libx264',
-                        ),
-                      ],
+                      children: formatList.map((format) {
+                        return CustomRadio(
+                          value: format,
+                          selector: (settings) => settings.outputFormat,
+                          updater: (settings, val) =>
+                              settings.copyWith(outputFormat: val),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+
+                  CustomCheckbox(
+                    label: "Change Video Codec",
+                    selector: (settings) => settings.changeVideoCodec,
+                    updater: (settings, val) =>
+                        settings.copyWith(changeVideoCodec: val),
+                  ),
+
+                  if(settings.changeVideoCodec) return Container(
+                    decoration: BoxDecoration(
+                      color: bgColor2,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      children: videoCodecList.map((videoCodec) {
+                        return CustomRadio(
+                          value: videoCodec,
+                          selector: (settings) => settings.videoCodec,
+                          updater: (settings, val) =>
+                              settings.copyWith(videoCodec: val),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+
+                  CustomCheckbox(
+                    label: "Change Audio Codec",
+                    selector: (settings) => settings.changeAudioCodec,
+                    updater: (settings, val) =>
+                        settings.copyWith(changeAudioCodec: val),
+                  ),
+
+                  Container(
+                    decoration: BoxDecoration(
+                      color: bgColor2,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      children: audioCodecList.map((audioCodec) {
+                        return CustomRadio(
+                          value: audioCodec,
+                          selector: (settings) => settings.audioCodec,
+                          updater: (settings, val) =>
+                              settings.copyWith(audioCodec: val),
+                        );
+                      }).toList(),
                     ),
                   ),
                 ],
