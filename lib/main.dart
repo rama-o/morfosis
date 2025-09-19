@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as p;
 
 void main() {
   runApp(const MorfosisApp());
@@ -10,6 +11,50 @@ const Color actionColor = Color(0xff467f68);
 const Color dangerColor = Color(0xffff8080);
 const Color foregroundColor = Color(0xffcccccc);
 
+class SectionTitle extends StatelessWidget {
+  final String label;
+
+  const SectionTitle({super.key, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(label, style: TextStyle(color: foregroundColor, fontSize: 28));
+  }
+}
+
+class CustomBtn extends StatelessWidget {
+  final Icon glyph;
+  final String tooltip;
+  final Color bg;
+  final Color fg;
+  final VoidCallback action;
+
+  const CustomBtn({
+    super.key,
+    required this.glyph,
+    required this.tooltip,
+    required this.bg,
+    required this.fg,
+    required this.action,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: IconButton(
+        icon: glyph,
+        tooltip: tooltip,
+        color: fg,
+        onPressed: action,
+      ),
+    );
+  }
+}
+
 class CodeInput extends StatelessWidget {
   final String output;
 
@@ -20,7 +65,6 @@ class CodeInput extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Color(0xff242b2f),
         borderRadius: BorderRadius.circular(10),
@@ -40,7 +84,6 @@ class PromptOutput extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Color(0xff382929),
         border: Border.all(color: Color(0xffa13030)),
@@ -65,6 +108,9 @@ class ListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String name = p.basenameWithoutExtension(path);
+    final String inputFormat = p.extension(path).replaceFirst('.', '');
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -72,11 +118,12 @@ class ListItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
+        spacing: 8,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(path, style: TextStyle(color: foregroundColor, fontSize: 22)),
-          const SizedBox(height: 8), // instead of spacing
+          Text(name, style: TextStyle(color: foregroundColor, fontSize: 22)),
           Row(
+            spacing: 8,
             children: [
               Expanded(
                 child: Container(
@@ -85,19 +132,24 @@ class ListItem extends StatelessWidget {
                     color: const Color(0xff4b7076),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Text('100%', style: TextStyle(color: foregroundColor)),
+                  child: Text(
+                    '100%',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: foregroundColor),
+                  ),
                 ),
               ),
-              const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: const Color.fromARGB(255, 12, 141, 141),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Text('avi', style: TextStyle(color: foregroundColor)),
+                child: Text(
+                  inputFormat,
+                  style: TextStyle(color: foregroundColor),
+                ),
               ),
-              const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
@@ -106,18 +158,12 @@ class ListItem extends StatelessWidget {
                 ),
                 child: Text(output, style: TextStyle(color: foregroundColor)),
               ),
-              const SizedBox(width: 8),
-              Container(
-                decoration: BoxDecoration(
-                  color: dangerColor,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: IconButton(
-                  icon: const Icon(Icons.delete),
-                  tooltip: 'Delete Item',
-                  color: foregroundColor,
-                  onPressed: () {},
-                ),
+              CustomBtn(
+                glyph: const Icon(Icons.delete),
+                tooltip: 'Delete Item',
+                bg: dangerColor,
+                fg: foregroundColor,
+                action: () {},
               ),
             ],
           ),
@@ -140,7 +186,7 @@ class _MorfosisAppState extends State<MorfosisApp> {
 
   void _onNavTapped(int index) {
     setState(() => _currentIndex = index);
-    _pageController.jumpToPage(index); // animateToPage for smooth animation
+    _pageController.jumpToPage(index);
   }
 
   void addFiles() {}
@@ -159,71 +205,45 @@ class _MorfosisAppState extends State<MorfosisApp> {
             setState(() => _currentIndex = index);
           },
           children: [
-            // Queue Page
             SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
+                spacing: 16,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 16),
-                    child: Row(
-                      spacing: 8,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'Queue',
-                            style: TextStyle(
-                              color: foregroundColor,
-                              fontSize: 28,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 150, 56, 187),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: IconButton(
-                            icon: const Icon(Icons.swap_horiz),
-                            tooltip: 'Convert Files',
-                            color: foregroundColor,
-                            onPressed: addFiles,
-                          ),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: actionColor,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: IconButton(
-                            icon: const Icon(Icons.add),
-                            tooltip: 'Add Files',
-                            color: foregroundColor,
-                            onPressed: addFiles,
-                          ),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: dangerColor,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: IconButton(
-                            icon: const Icon(Icons.delete),
-                            tooltip: 'Clear Queue',
-                            color: foregroundColor,
-                            onPressed: clearQueue,
-                          ),
-                        ),
-                      ],
-                    ),
+                  Row(
+                    spacing: 8,
+                    children: [
+                      Expanded(child: SectionTitle(label: 'Queue')),
+                      CustomBtn(
+                        glyph: const Icon(Icons.add),
+                        tooltip: 'Add Files',
+                        bg: actionColor,
+                        fg: foregroundColor,
+                        action: addFiles,
+                      ),
+                      CustomBtn(
+                        glyph: const Icon(Icons.cleaning_services),
+                        tooltip: 'Clear Queue',
+                        bg: dangerColor,
+                        fg: foregroundColor,
+                        action: clearQueue,
+                      ),
+                      CustomBtn(
+                        glyph: const Icon(Icons.swap_horiz),
+                        tooltip: 'Convert Files',
+                        bg: Color.fromARGB(255, 150, 56, 187),
+                        fg: foregroundColor,
+                        action: convertFiles,
+                      ),
+                    ],
                   ),
 
                   CodeInput(output: 'ffmpeg -i * -o *'),
                   PromptOutput(output: 'error'),
 
                   ListItem(
-                    path: 'cumpleaños alejando.avi',
+                    path: 'cumpleaños alejando.wmv',
                     id: 4,
                     output: 'mp4',
                   ),
@@ -231,20 +251,27 @@ class _MorfosisAppState extends State<MorfosisApp> {
               ),
             ),
 
-            // Settings Page
             SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
+                spacing: 16,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    margin: const EdgeInsets.only(bottom: 16),
-                    child: Text(
-                      'Settings',
-                      style: TextStyle(color: foregroundColor, fontSize: 28),
+                    child: Row(
+                      spacing: 8,
+                      children: [
+                        Expanded(child: SectionTitle(label: 'Settings')),
+                        CustomBtn(
+                          glyph: const Icon(Icons.autorenew),
+                          tooltip: 'Reset Settings',
+                          bg: dangerColor,
+                          fg: foregroundColor,
+                          action: clearQueue,
+                        ),
+                      ],
                     ),
                   ),
-
                   CodeInput(output: 'ffmpeg -i * -o *'),
                   PromptOutput(output: 'error'),
                   Text('Change Format', style: TextStyle(color: Colors.white)),
@@ -262,7 +289,6 @@ class _MorfosisAppState extends State<MorfosisApp> {
             BottomNavigationBarItem(
               icon: Icon(Icons.settings),
               label: 'Settings',
-              // style: TextStyle(color: Color(0xff364245))
             ),
           ],
         ),
