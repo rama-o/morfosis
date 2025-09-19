@@ -14,50 +14,34 @@ const Color uncheckedColor = Color(0xFF386A68);
 const Color checkedColor = Color(0xFF689896);
 
 class UiSettings {
-  bool changeFormat;
   String outputFormat;
 
-  bool changeVideoCodec;
   String videoCodec;
 
-  bool changeAudioCodec;
   String audioCodec;
 
-  bool changeOutput;
   String outputPrefix;
   String outputSuffix;
 
   UiSettings({
-    this.changeFormat = true,
     this.outputFormat = 'mp4',
-    this.changeVideoCodec = true,
     this.videoCodec = 'libx264',
-    this.changeAudioCodec = true,
     this.audioCodec = 'ac3',
-    this.changeOutput = true,
     this.outputPrefix = '',
     this.outputSuffix = '',
   });
 
   UiSettings copyWith({
-    bool? changeFormat,
     String? outputFormat,
-    bool? changeVideoCodec,
     String? videoCodec,
-    bool? changeAudioCodec,
     String? audioCodec,
-    bool? changeOutput,
     String? outputPrefix,
     String? outputSuffix,
   }) {
     return UiSettings(
-      changeFormat: changeFormat ?? this.changeFormat,
       outputFormat: outputFormat ?? this.outputFormat,
-      changeVideoCodec: changeVideoCodec ?? this.changeVideoCodec,
       videoCodec: videoCodec ?? this.videoCodec,
-      changeAudioCodec: changeAudioCodec ?? this.changeAudioCodec,
       audioCodec: audioCodec ?? this.audioCodec,
-      changeOutput: changeOutput ?? this.changeOutput,
       outputPrefix: outputPrefix ?? this.outputPrefix,
       outputSuffix: outputSuffix ?? this.outputSuffix,
     );
@@ -66,7 +50,10 @@ class UiSettings {
 
 final ValueNotifier<UiSettings> settingsNotifier = ValueNotifier(UiSettings());
 
+final String comando = 'ffmpeg -i * -o *';
+
 const formatList = [
+  'Keep Original',
   'mp4',
   'avi',
   'webm',
@@ -80,9 +67,11 @@ const formatList = [
   'flac',
 ];
 
-const videoCodecList = ['libx264'];
+const videoCodecList = ['Keep Original', 'libx264'];
 
-const audioCodecList = ['acc', 'ac3', 'mp3lame'];
+const audioCodecList = ['Keep Original', 'acc', 'ac3', 'mp3lame'];
+
+const queue = ['/home/alejandro video.wmv', '/home/juana camacho.avi'];
 
 class SectionTitle extends StatelessWidget {
   final String label;
@@ -165,42 +154,42 @@ class CustomRadio extends StatelessWidget {
   }
 }
 
-class CustomCheckbox extends StatelessWidget {
-  final String label;
-  final bool Function(UiSettings) selector;
-  final UiSettings Function(UiSettings, bool) updater;
+// class CustomCheckbox extends StatelessWidget {
+//   final String label;
+//   final bool Function(UiSettings) selector;
+//   final UiSettings Function(UiSettings, bool) updater;
 
-  const CustomCheckbox({
-    super.key,
-    required this.label,
-    required this.selector,
-    required this.updater,
-  });
+//   const CustomCheckbox({
+//     super.key,
+//     required this.label,
+//     required this.selector,
+//     required this.updater,
+//   });
 
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<UiSettings>(
-      valueListenable: settingsNotifier,
-      builder: (context, settings, _) {
-        final checked = selector(settings);
-        return CheckboxListTile(
-          title: Text(label, style: TextStyle(color: foregroundColor)),
-          value: checked,
-          onChanged: (val) {
-            if (val != null) {
-              settingsNotifier.value = updater(settings, val);
-            }
-          },
-          fillColor: MaterialStateProperty.resolveWith<Color>((states) {
-            if (states.contains(MaterialState.selected)) return checkedColor;
-            return uncheckedColor;
-          }),
-          activeColor: checkedColor,
-        );
-      },
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return ValueListenableBuilder<UiSettings>(
+//       valueListenable: settingsNotifier,
+//       builder: (context, settings, _) {
+//         final checked = selector(settings);
+//         return CheckboxListTile(
+//           title: Text(label, style: TextStyle(color: foregroundColor)),
+//           value: checked,
+//           onChanged: (val) {
+//             if (val != null) {
+//               settingsNotifier.value = updater(settings, val);
+//             }
+//           },
+//           fillColor: MaterialStateProperty.resolveWith<Color>((states) {
+//             if (states.contains(MaterialState.selected)) return checkedColor;
+//             return uncheckedColor;
+//           }),
+//           activeColor: checkedColor,
+//         );
+//       },
+//     );
+//   }
+// }
 
 class CodeInput extends StatelessWidget {
   final String output;
@@ -255,14 +244,8 @@ class PromptOutput extends StatelessWidget {
 class ListItem extends StatelessWidget {
   final int id;
   final String path;
-  final String output;
 
-  const ListItem({
-    super.key,
-    required this.id,
-    required this.path,
-    required this.output,
-  });
+  const ListItem({super.key, required this.id, required this.path});
 
   @override
   Widget build(BuildContext context) {
@@ -314,7 +297,10 @@ class ListItem extends StatelessWidget {
                   color: const Color(0xff1279b1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Text(output, style: TextStyle(color: foregroundColor)),
+                child: Text(
+                  settingsNotifier.value.outputFormat,
+                  style: TextStyle(color: foregroundColor),
+                ),
               ),
               CustomBtn(
                 glyph: const Icon(Icons.delete),
@@ -344,7 +330,6 @@ class _MorfosisAppState extends State<MorfosisApp> {
   int currentViewIndex = 0;
   bool changeFormat = true;
 
-  String comando = 'ffmpeg -i * -o *';
   List<String> errors = [];
 
   void navigateTo(int index) {
@@ -406,10 +391,16 @@ class _MorfosisAppState extends State<MorfosisApp> {
 
                   if (!errors.isEmpty) PromptOutput(output: errors),
 
-                  ListItem(
-                    path: 'cumpleaños alejando.wmv',
-                    id: 4,
-                    output: 'mp4',
+                  Column(
+                    spacing: 16,
+                    children: queue
+                        .map(
+                          (item) => ListItem(
+                            path: item,
+                            id: queue.indexOf(item), // not ideal if duplicates
+                          ),
+                        )
+                        .toList(),
                   ),
                 ],
               ),
@@ -445,11 +436,9 @@ class _MorfosisAppState extends State<MorfosisApp> {
                   CodeInput(output: comando),
                   if (!errors.isEmpty) PromptOutput(output: errors),
 
-                  CustomCheckbox(
-                    label: "Change Format",
-                    selector: (settings) => settings.changeFormat,
-                    updater: (settings, val) =>
-                        settings.copyWith(changeFormat: val),
+                  Text(
+                    'Format',
+                    style: TextStyle(color: foregroundColor, fontSize: 22),
                   ),
 
                   Container(
@@ -469,14 +458,12 @@ class _MorfosisAppState extends State<MorfosisApp> {
                     ),
                   ),
 
-                  CustomCheckbox(
-                    label: "Change Video Codec",
-                    selector: (settings) => settings.changeVideoCodec,
-                    updater: (settings, val) =>
-                        settings.copyWith(changeVideoCodec: val),
+                  Text(
+                    'Video Codec',
+                    style: TextStyle(color: foregroundColor, fontSize: 22),
                   ),
 
-                  if(settings.changeVideoCodec) return Container(
+                  Container(
                     decoration: BoxDecoration(
                       color: bgColor2,
                       borderRadius: BorderRadius.circular(10),
@@ -493,11 +480,9 @@ class _MorfosisAppState extends State<MorfosisApp> {
                     ),
                   ),
 
-                  CustomCheckbox(
-                    label: "Change Audio Codec",
-                    selector: (settings) => settings.changeAudioCodec,
-                    updater: (settings, val) =>
-                        settings.copyWith(changeAudioCodec: val),
+                  Text(
+                    'Audio Codec',
+                    style: TextStyle(color: foregroundColor, fontSize: 22),
                   ),
 
                   Container(
