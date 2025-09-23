@@ -4,6 +4,12 @@
 > batch video/audio convertion powered by ffmpeg
 platform: f-droid and google play
 
+- strip metadata
+
+```sh
+ffmpeg -i in.mov -map_metadata -1 -c copy out.mov
+```
+
 ## Tijera / FFMPEG editor
 > small video editor that allows you to clip and convert a video or a song powered by ffmpeg
 platform: f-droid, google play, linux mint

@@ -50,7 +50,12 @@ class UiSettings {
 
 final ValueNotifier<UiSettings> settingsNotifier = ValueNotifier(UiSettings());
 
-final String comando = 'ffmpeg -i * -o *';
+String buildComando(UiSettings settings) {
+  return 'ffmpeg -i * '
+      '-c:v ${settings.videoCodec} '
+      '-c:a ${settings.audioCodec} '
+      'output.${settings.outputFormat}';
+}
 
 const formatList = [
   'Keep Original',
@@ -58,7 +63,9 @@ const formatList = [
   'avi',
   'webm',
   'wmv',
+  'mov',
   'mpeg',
+  // -----------------------------------------------
   'ogg',
   'mp3',
   'm4a',
@@ -153,43 +160,6 @@ class CustomRadio extends StatelessWidget {
     );
   }
 }
-
-// class CustomCheckbox extends StatelessWidget {
-//   final String label;
-//   final bool Function(UiSettings) selector;
-//   final UiSettings Function(UiSettings, bool) updater;
-
-//   const CustomCheckbox({
-//     super.key,
-//     required this.label,
-//     required this.selector,
-//     required this.updater,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return ValueListenableBuilder<UiSettings>(
-//       valueListenable: settingsNotifier,
-//       builder: (context, settings, _) {
-//         final checked = selector(settings);
-//         return CheckboxListTile(
-//           title: Text(label, style: TextStyle(color: foregroundColor)),
-//           value: checked,
-//           onChanged: (val) {
-//             if (val != null) {
-//               settingsNotifier.value = updater(settings, val);
-//             }
-//           },
-//           fillColor: MaterialStateProperty.resolveWith<Color>((states) {
-//             if (states.contains(MaterialState.selected)) return checkedColor;
-//             return uncheckedColor;
-//           }),
-//           activeColor: checkedColor,
-//         );
-//       },
-//     );
-//   }
-// }
 
 class CodeInput extends StatelessWidget {
   final String output;
@@ -387,7 +357,12 @@ class _MorfosisAppState extends State<MorfosisApp> {
                     ],
                   ),
 
-                  CodeInput(output: comando),
+                  ValueListenableBuilder<UiSettings>(
+                    valueListenable: settingsNotifier,
+                    builder: (context, settings, _) {
+                      return CodeInput(output: buildComando(settings));
+                    },
+                  ),
 
                   if (!errors.isEmpty) PromptOutput(output: errors),
 
@@ -395,10 +370,8 @@ class _MorfosisAppState extends State<MorfosisApp> {
                     spacing: 16,
                     children: queue
                         .map(
-                          (item) => ListItem(
-                            path: item,
-                            id: queue.indexOf(item), // not ideal if duplicates
-                          ),
+                          (item) =>
+                              ListItem(path: item, id: queue.indexOf(item)),
                         )
                         .toList(),
                   ),
@@ -433,7 +406,13 @@ class _MorfosisAppState extends State<MorfosisApp> {
                     ],
                   ),
 
-                  CodeInput(output: comando),
+                  ValueListenableBuilder<UiSettings>(
+                    valueListenable: settingsNotifier,
+                    builder: (context, settings, _) {
+                      return CodeInput(output: buildComando(settings));
+                    },
+                  ),
+
                   if (!errors.isEmpty) PromptOutput(output: errors),
 
                   Text(
@@ -501,19 +480,27 @@ class _MorfosisAppState extends State<MorfosisApp> {
                       }).toList(),
                     ),
                   ),
+
+                  Text(
+                    'Output',
+                    style: TextStyle(color: foregroundColor, fontSize: 22),
+                  ),
                 ],
               ),
             ),
           ],
         ),
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.all(16),
-          child: CustomBtn(
-            glyph: const Icon(Icons.swap_horiz),
-            tooltip: 'Convert Files',
-            bg: Color.fromARGB(255, 150, 56, 187),
-            fg: foregroundColor,
-            action: convertFiles,
+        bottomNavigationBar: SafeArea(
+          minimum: const EdgeInsets.all(16),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            child: CustomBtn(
+              glyph: const Icon(Icons.swap_horiz),
+              tooltip: 'Convert Files',
+              bg: const Color.fromARGB(255, 150, 56, 187),
+              fg: foregroundColor,
+              action: convertFiles,
+            ),
           ),
         ),
       ),
