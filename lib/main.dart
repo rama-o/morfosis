@@ -5,12 +5,13 @@ void main() {
   runApp(const MorfosisApp());
 }
 
-const Color bgColor = Color(0xff364245);
-const Color bgColor2 = Color(0xff364852);
-const Color actionColor = Color(0xff467f68);
+const Color bgColor = Color.fromARGB(255, 20, 20, 20);
+const Color bgColor2 = Color.fromARGB(255, 25, 25, 25);
+const Color barColor = Color.fromARGB(255, 20, 25, 29);
+const Color detailsColor = Color.fromARGB(255, 150, 128, 233);
 const Color dangerColor = Color(0xffff8080);
 const Color foregroundColor = Color(0xffcccccc);
-const Color inputColor = Color(0xff386a68);
+const Color inputColor = Color.fromARGB(255, 118, 190, 140);
 const Color uncheckedColor = Color(0xFF386A68);
 const Color checkedColor = Color(0xFF689896);
 
@@ -29,7 +30,7 @@ class UiSettings {
     this.videoCodec = 'libx264',
     this.audioCodec = 'ac3',
     this.outputPrefix = '',
-    this.outputSuffix = '',
+    this.outputSuffix = '.copy',
   });
 
   UiSettings copyWith({
@@ -87,7 +88,18 @@ const videoCodecList = ['Keep Original', 'libx264'];
 
 const audioCodecList = ['Keep Original', 'acc', 'ac3', 'mp3lame'];
 
-const queue = ['/home/alejandro video.wmv', '/home/juana camacho.avi'];
+const queue = [
+  '/home/alejandro video.wmv',
+  '/home/juana camacho visitando los sobrinos de santa fe.avi',
+];
+
+final suffixController = TextEditingController(
+  text: settingsNotifier.value.outputSuffix,
+);
+
+final prefixController = TextEditingController(
+  text: settingsNotifier.value.outputPrefix,
+);
 
 class SectionTitle extends StatelessWidget {
   final String label;
@@ -100,19 +112,44 @@ class SectionTitle extends StatelessWidget {
   }
 }
 
-class CustomBtn extends StatelessWidget {
+class CustomBtnSecondary extends StatelessWidget {
   final Icon glyph;
   final String tooltip;
   final Color bg;
-  final Color fg;
   final VoidCallback action;
 
-  const CustomBtn({
+  const CustomBtnSecondary({
     super.key,
     required this.glyph,
     required this.tooltip,
     required this.bg,
-    required this.fg,
+    required this.action,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: IconButton(
+        icon: glyph,
+        tooltip: tooltip,
+        color: bg,
+        onPressed: action,
+      ),
+    );
+  }
+}
+
+class CustomBtnPrimary extends StatelessWidget {
+  final Icon glyph;
+  final String tooltip;
+  final Color bg;
+  final VoidCallback action;
+
+  const CustomBtnPrimary({
+    super.key,
+    required this.glyph,
+    required this.tooltip,
+    required this.bg,
     required this.action,
   });
 
@@ -121,12 +158,12 @@ class CustomBtn extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: bg,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(25),
       ),
       child: IconButton(
         icon: glyph,
         tooltip: tooltip,
-        color: fg,
+        color: bgColor,
         onPressed: action,
       ),
     );
@@ -181,7 +218,7 @@ class CodeInput extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Color(0xff242b2f),
+        color: Color.fromARGB(255, 27, 35, 51),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(output, style: TextStyle(color: Color(0xffffe23e))),
@@ -229,7 +266,7 @@ class ListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String name = p.basenameWithoutExtension(path);
-    final String inputFormat = p.extension(path).replaceFirst('.', '');
+    // final String inputFormat = p.extension(path).replaceFirst('.', '');
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -241,16 +278,16 @@ class ListItem extends StatelessWidget {
         spacing: 8,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(name, style: TextStyle(color: foregroundColor, fontSize: 22)),
+          Text(name, style: TextStyle(color: foregroundColor, fontSize: 18)),
           Row(
-            spacing: 8,
+            spacing: 16,
             children: [
               Expanded(
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Color(0xff4b7076),
-                    borderRadius: BorderRadius.circular(10),
+                    color: const Color.fromARGB(255, 61, 61, 61),
+                    borderRadius: BorderRadius.circular(25),
                   ),
                   child: Text(
                     '100%',
@@ -259,33 +296,33 @@ class ListItem extends StatelessWidget {
                   ),
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 12, 141, 141),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  inputFormat,
-                  style: TextStyle(color: foregroundColor),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: const Color(0xff1279b1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  settingsNotifier.value.outputFormat,
-                  style: TextStyle(color: foregroundColor),
-                ),
-              ),
-              CustomBtn(
+              // Container(
+              //   padding: const EdgeInsets.all(8),
+              //   decoration: BoxDecoration(
+              //     color: const Color.fromARGB(255, 12, 141, 141),
+              //     borderRadius: BorderRadius.circular(10),
+              //   ),
+              //   child: Text(
+              //     inputFormat,
+              //     style: TextStyle(color: foregroundColor),
+              //   ),
+              // ),
+              // Container(
+              //   padding: const EdgeInsets.all(8),
+              //   decoration: BoxDecoration(
+              //     color: const Color(0xff1279b1),
+              //     borderRadius: BorderRadius.circular(10),
+              //   ),
+              //   child: Text(
+              //     settingsNotifier.value.outputFormat,
+              //     style: TextStyle(color: foregroundColor),
+              //   ),
+              // ),
+              CustomBtnSecondary(
                 glyph: const Icon(Icons.delete),
                 tooltip: 'Delete Item',
                 bg: dangerColor,
-                fg: foregroundColor,
+
                 action: () {},
               ),
             ],
@@ -332,225 +369,231 @@ class _MorfosisAppState extends State<MorfosisApp> {
             setState(() => currentViewIndex = index);
           },
           children: [
-            SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                spacing: 16,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    spacing: 8,
-                    children: [
-                      Expanded(child: SectionTitle(label: 'Queue')),
-                      CustomBtn(
-                        glyph: const Icon(Icons.add),
-                        tooltip: 'Add Files',
-                        bg: actionColor,
-                        fg: foregroundColor,
-                        action: addFiles,
-                      ),
-                      CustomBtn(
-                        glyph: const Icon(Icons.cleaning_services),
-                        tooltip: 'Clear Queue',
-                        bg: dangerColor,
-                        fg: foregroundColor,
-                        action: clearQueue,
-                      ),
-                      CustomBtn(
-                        glyph: const Icon(Icons.settings),
-                        tooltip: 'Settings',
-                        bg: actionColor,
-                        fg: foregroundColor,
-                        action: () => navigateTo(1),
-                      ),
-                    ],
-                  ),
-
-                  if (!errors.isEmpty) PromptOutput(output: errors),
-
-                  Column(
-                    spacing: 16,
-                    children: queue
-                        .map(
-                          (item) =>
-                              ListItem(path: item, id: queue.indexOf(item)),
-                        )
-                        .toList(),
-                  ),
-                ],
-              ),
-            ),
-
-            SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                spacing: 16,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    spacing: 8,
-                    children: [
-                      Expanded(child: SectionTitle(label: 'Settings')),
-                      CustomBtn(
-                        glyph: const Icon(Icons.autorenew),
-                        tooltip: 'Reset Settings',
-                        bg: dangerColor,
-                        fg: foregroundColor,
-                        action: clearQueue,
-                      ),
-                      CustomBtn(
-                        glyph: const Icon(Icons.close),
-                        tooltip: 'Close Settings',
-                        bg: actionColor,
-                        fg: foregroundColor,
-                        action: () => navigateTo(0),
-                      ),
-                    ],
-                  ),
-
-                  if (!errors.isEmpty) PromptOutput(output: errors),
-
-                  Text(
-                    'Format',
-                    style: TextStyle(color: foregroundColor, fontSize: 22),
-                  ),
-
-                  Container(
-                    decoration: BoxDecoration(
-                      color: bgColor2,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      children: formatList.map((format) {
-                        return CustomRadio(
-                          value: format,
-                          selector: (settings) => settings.outputFormat,
-                          updater: (settings, val) =>
-                              settings.copyWith(outputFormat: val),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-
-                  Text(
-                    'Video Codec',
-                    style: TextStyle(color: foregroundColor, fontSize: 22),
-                  ),
-
-                  Container(
-                    decoration: BoxDecoration(
-                      color: bgColor2,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      children: videoCodecList.map((videoCodec) {
-                        return CustomRadio(
-                          value: videoCodec,
-                          selector: (settings) => settings.videoCodec,
-                          updater: (settings, val) =>
-                              settings.copyWith(videoCodec: val),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-
-                  Text(
-                    'Audio Codec',
-                    style: TextStyle(color: foregroundColor, fontSize: 22),
-                  ),
-
-                  Container(
-                    decoration: BoxDecoration(
-                      color: bgColor2,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      children: audioCodecList.map((audioCodec) {
-                        return CustomRadio(
-                          value: audioCodec,
-                          selector: (settings) => settings.audioCodec,
-                          updater: (settings, val) =>
-                              settings.copyWith(audioCodec: val),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-
-                  Text(
-                    'Output Name',
-                    style: TextStyle(color: foregroundColor, fontSize: 22),
-                  ),
-
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: bgColor2,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      spacing: 16,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+            SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  spacing: 16,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      spacing: 8,
                       children: [
-                        Text(
-                          'Prefix',
-                          style: TextStyle(color: foregroundColor),
+                        Expanded(child: SectionTitle(label: 'Queue')),
+                        CustomBtnSecondary(
+                          glyph: const Icon(Icons.add),
+                          tooltip: 'Add Files',
+                          bg: detailsColor,
+
+                          action: addFiles,
                         ),
-                        TextField(
-                          style: TextStyle(color: foregroundColor),
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: inputColor,
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide.none,
-                            ),
-                          ),
-                          onChanged: (value) {
-                            settingsNotifier.value = settingsNotifier.value
-                                .copyWith(outputPrefix: value);
-                          },
+                        CustomBtnSecondary(
+                          glyph: const Icon(Icons.cleaning_services),
+                          tooltip: 'Clear Queue',
+                          bg: detailsColor,
+
+                          action: clearQueue,
                         ),
-                        Text(
-                          'Suffix',
-                          style: TextStyle(color: foregroundColor),
-                        ),
-                        TextField(
-                          style: TextStyle(color: foregroundColor),
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: inputColor,
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide.none,
-                            ),
-                          ),
-                          onChanged: (value) {
-                            settingsNotifier.value = settingsNotifier.value
-                                .copyWith(outputSuffix: value);
-                          },
+                        CustomBtnSecondary(
+                          glyph: const Icon(Icons.settings),
+                          tooltip: 'Settings',
+                          bg: detailsColor,
+
+                          action: () => navigateTo(1),
                         ),
                       ],
                     ),
-                  ),
-                ],
+
+                    if (!errors.isEmpty) PromptOutput(output: errors),
+
+                    Column(
+                      spacing: 16,
+                      children: queue
+                          .map(
+                            (item) =>
+                                ListItem(path: item, id: queue.indexOf(item)),
+                          )
+                          .toList(),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  spacing: 16,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      spacing: 8,
+                      children: [
+                        Expanded(child: SectionTitle(label: 'Settings')),
+                        CustomBtnSecondary(
+                          glyph: const Icon(Icons.autorenew),
+                          tooltip: 'Reset Settings',
+                          bg: detailsColor,
+
+                          action: clearQueue,
+                        ),
+                        CustomBtnSecondary(
+                          glyph: const Icon(Icons.close),
+                          tooltip: 'Close Settings',
+                          bg: detailsColor,
+
+                          action: () => navigateTo(0),
+                        ),
+                      ],
+                    ),
+
+                    if (!errors.isEmpty) PromptOutput(output: errors),
+
+                    Text(
+                      'Format',
+                      style: TextStyle(color: foregroundColor, fontSize: 18),
+                    ),
+
+                    Container(
+                      decoration: BoxDecoration(
+                        color: bgColor2,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        children: formatList.map((format) {
+                          return CustomRadio(
+                            value: format,
+                            selector: (settings) => settings.outputFormat,
+                            updater: (settings, val) =>
+                                settings.copyWith(outputFormat: val),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+
+                    Text(
+                      'Video Codec',
+                      style: TextStyle(color: foregroundColor, fontSize: 18),
+                    ),
+
+                    Container(
+                      decoration: BoxDecoration(
+                        color: bgColor2,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        children: videoCodecList.map((videoCodec) {
+                          return CustomRadio(
+                            value: videoCodec,
+                            selector: (settings) => settings.videoCodec,
+                            updater: (settings, val) =>
+                                settings.copyWith(videoCodec: val),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+
+                    Text(
+                      'Audio Codec',
+                      style: TextStyle(color: foregroundColor, fontSize: 18),
+                    ),
+
+                    Container(
+                      decoration: BoxDecoration(
+                        color: bgColor2,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        children: audioCodecList.map((audioCodec) {
+                          return CustomRadio(
+                            value: audioCodec,
+                            selector: (settings) => settings.audioCodec,
+                            updater: (settings, val) =>
+                                settings.copyWith(audioCodec: val),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+
+                    Text(
+                      'Output Name',
+                      style: TextStyle(color: foregroundColor, fontSize: 18),
+                    ),
+
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: bgColor2,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        spacing: 16,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Prefix',
+                            style: TextStyle(color: foregroundColor),
+                          ),
+                          TextField(
+                            controller: prefixController,
+                            style: TextStyle(color: bgColor),
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: inputColor,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                            onChanged: (value) {
+                              settingsNotifier.value = settingsNotifier.value
+                                  .copyWith(outputPrefix: value);
+                            },
+                          ),
+                          Text(
+                            'Suffix',
+                            style: TextStyle(color: foregroundColor),
+                          ),
+                          TextField(
+                            controller: suffixController,
+                            style: const TextStyle(color: bgColor),
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: inputColor,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                            onChanged: (value) {
+                              settingsNotifier.value = settingsNotifier.value
+                                  .copyWith(outputSuffix: value);
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
         ),
         bottomNavigationBar: SafeArea(
-          minimum: const EdgeInsets.all(16),
           child: Container(
-            padding: const EdgeInsets.only(bottom: 16),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(color: barColor),
             child: Row(
-              spacing: 8,
+              spacing: 16,
               children: [
                 Expanded(
                   child: ValueListenableBuilder<UiSettings>(
@@ -561,11 +604,11 @@ class _MorfosisAppState extends State<MorfosisApp> {
                   ),
                 ),
 
-                CustomBtn(
+                CustomBtnPrimary(
                   glyph: const Icon(Icons.swap_horiz),
                   tooltip: 'Convert Files',
-                  bg: const Color.fromARGB(255, 150, 56, 187),
-                  fg: foregroundColor,
+                  bg: detailsColor,
+
                   action: convertFiles,
                 ),
               ],
