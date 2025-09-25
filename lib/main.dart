@@ -10,6 +10,7 @@ const Color bgColor2 = Color(0xff364852);
 const Color actionColor = Color(0xff467f68);
 const Color dangerColor = Color(0xffff8080);
 const Color foregroundColor = Color(0xffcccccc);
+const Color inputColor = Color(0xff386a68);
 const Color uncheckedColor = Color(0xFF386A68);
 const Color checkedColor = Color(0xFF689896);
 
@@ -51,21 +52,29 @@ class UiSettings {
 final ValueNotifier<UiSettings> settingsNotifier = ValueNotifier(UiSettings());
 
 String buildComando(UiSettings settings) {
-  return 'ffmpeg -i * '
-      '-c:v ${settings.videoCodec} '
-      '-c:a ${settings.audioCodec} '
-      'output.${settings.outputFormat}';
+  String videoCodec = settings.videoCodec == 'Keep Original'
+      ? ''
+      : '-c:v ${settings.videoCodec}';
+
+  String audioCodec = settings.audioCodec == 'Keep Original'
+      ? ''
+      : '-c:a ${settings.audioCodec}';
+
+  return [
+    'ffmpeg -i *',
+    videoCodec,
+    audioCodec,
+    '${settings.outputPrefix}<fileName>${settings.outputSuffix}.${settings.outputFormat}',
+  ].join(' ');
 }
 
 const formatList = [
-  'Keep Original',
   'mp4',
   'avi',
   'webm',
   'wmv',
   'mov',
   'mpeg',
-  // -----------------------------------------------
   'ogg',
   'mp3',
   'm4a',
@@ -357,13 +366,6 @@ class _MorfosisAppState extends State<MorfosisApp> {
                     ],
                   ),
 
-                  ValueListenableBuilder<UiSettings>(
-                    valueListenable: settingsNotifier,
-                    builder: (context, settings, _) {
-                      return CodeInput(output: buildComando(settings));
-                    },
-                  ),
-
                   if (!errors.isEmpty) PromptOutput(output: errors),
 
                   Column(
@@ -404,13 +406,6 @@ class _MorfosisAppState extends State<MorfosisApp> {
                         action: () => navigateTo(0),
                       ),
                     ],
-                  ),
-
-                  ValueListenableBuilder<UiSettings>(
-                    valueListenable: settingsNotifier,
-                    builder: (context, settings, _) {
-                      return CodeInput(output: buildComando(settings));
-                    },
                   ),
 
                   if (!errors.isEmpty) PromptOutput(output: errors),
@@ -482,8 +477,68 @@ class _MorfosisAppState extends State<MorfosisApp> {
                   ),
 
                   Text(
-                    'Output',
+                    'Output Name',
                     style: TextStyle(color: foregroundColor, fontSize: 22),
+                  ),
+
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: bgColor2,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      spacing: 16,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Prefix',
+                          style: TextStyle(color: foregroundColor),
+                        ),
+                        TextField(
+                          style: TextStyle(color: foregroundColor),
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: inputColor,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                          onChanged: (value) {
+                            settingsNotifier.value = settingsNotifier.value
+                                .copyWith(outputPrefix: value);
+                          },
+                        ),
+                        Text(
+                          'Suffix',
+                          style: TextStyle(color: foregroundColor),
+                        ),
+                        TextField(
+                          style: TextStyle(color: foregroundColor),
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: inputColor,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                          onChanged: (value) {
+                            settingsNotifier.value = settingsNotifier.value
+                                .copyWith(outputSuffix: value);
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -493,13 +548,27 @@ class _MorfosisAppState extends State<MorfosisApp> {
         bottomNavigationBar: SafeArea(
           minimum: const EdgeInsets.all(16),
           child: Container(
-            padding: const EdgeInsets.all(16),
-            child: CustomBtn(
-              glyph: const Icon(Icons.swap_horiz),
-              tooltip: 'Convert Files',
-              bg: const Color.fromARGB(255, 150, 56, 187),
-              fg: foregroundColor,
-              action: convertFiles,
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Row(
+              spacing: 8,
+              children: [
+                Expanded(
+                  child: ValueListenableBuilder<UiSettings>(
+                    valueListenable: settingsNotifier,
+                    builder: (context, settings, _) {
+                      return CodeInput(output: buildComando(settings));
+                    },
+                  ),
+                ),
+
+                CustomBtn(
+                  glyph: const Icon(Icons.swap_horiz),
+                  tooltip: 'Convert Files',
+                  bg: const Color.fromARGB(255, 150, 56, 187),
+                  fg: foregroundColor,
+                  action: convertFiles,
+                ),
+              ],
             ),
           ),
         ),
