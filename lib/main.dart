@@ -9,34 +9,34 @@ void main() {
   runApp(const MorfosisApp());
 }
 
-Color darken(Color color, [double amount = .1]) {
-  assert(amount >= 0 && amount <= 1);
+// Color darken(Color color, [double amount = .1]) {
+//   assert(amount >= 0 && amount <= 1);
 
-  final hsl = HSLColor.fromColor(color);
-  final hslDark = hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0));
+//   final hsl = HSLColor.fromColor(color);
+//   final hslDark = hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0));
 
-  return hslDark.toColor();
-}
+//   return hslDark.toColor();
+// }
 
-Color lighten(Color color, [double amount = .1]) {
-  assert(amount >= 0 && amount <= 1);
+// Color lighten(Color color, [double amount = .1]) {
+//   assert(amount >= 0 && amount <= 1);
 
-  final hsl = HSLColor.fromColor(color);
-  final hslLight = hsl.withLightness((hsl.lightness + amount).clamp(0.0, 1.0));
+//   final hsl = HSLColor.fromColor(color);
+//   final hslLight = hsl.withLightness((hsl.lightness + amount).clamp(0.0, 1.0));
 
-  return hslLight.toColor();
-}
+//   return hslLight.toColor();
+// }
 
-const Color bgColor = Color.fromARGB(255, 20, 20, 20);
-const Color bgColor2 = Color.fromARGB(255, 25, 25, 25);
+const Color bgColor = Color.fromARGB(255, 20, 20, 23);
+const Color bgColor2 = Color.fromARGB(255, 25, 25, 28);
 const Color barColor = Color.fromARGB(255, 20, 25, 29);
 const Color accentColor = Color.fromARGB(255, 170, 150, 241);
 const Color dangerColor = Color(0xffff8080);
 const Color foregroundColor = Color(0xffcccccc);
 
-final Color uncheckedColor = darken(accentColor, .3);
+final Color uncheckedColor = const Color.fromARGB(255, 122, 110, 167);
 final Color checkedColor = accentColor;
-final Color inputColor = darken(accentColor, .4);
+final Color inputColor = const Color.fromARGB(255, 69, 62, 92);
 
 class UiSettings {
   String outputFormat;
@@ -78,11 +78,21 @@ final ValueNotifier<UiSettings> settingsNotifier = ValueNotifier(UiSettings());
 final ValueNotifier<List<File>> filesNotifier = ValueNotifier([]);
 
 void addFile(File file) {
-  filesNotifier.value = [...filesNotifier.value, file];
+  final updatedFiles = [...filesNotifier.value, file];
+
+  final uniqueFiles = {for (var f in updatedFiles) f.path: f}.values.toList();
+
+  uniqueFiles.sort((a, b) => p.basename(a.path).compareTo(p.basename(b.path)));
+
+  filesNotifier.value = uniqueFiles;
 }
 
-void removeFile(fileFile file) {
+void removeFile(File file) {
   filesNotifier.value = filesNotifier.value.where((f) => f != file).toList();
+}
+
+void clearQueue() {
+  filesNotifier.value = [];
 }
 
 String buildComando(UiSettings settings) {
@@ -121,11 +131,6 @@ const videoCodecList = ['Keep Original', 'libx264'];
 
 const audioCodecList = ['Keep Original', 'acc', 'ac3', 'mp3lame'];
 
-const queue = [
-  '/home/alejandro video.wmv',
-  '/home/juana camacho visitando los sobrinos de santa fe.avi',
-];
-
 final suffixController = TextEditingController(
   text: settingsNotifier.value.outputSuffix,
 );
@@ -151,6 +156,44 @@ Future<void> pickAudioOrVideo() async {
     print("User canceled");
   }
 }
+
+class EmptyList extends StatelessWidget {
+  const EmptyList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity, // full width
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: bgColor2,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center, // horizontal centering
+        children: [
+          const Icon(Icons.inbox, size: 48, color: Colors.grey),
+          const SizedBox(height: 8),
+          Text(
+            "No files yet",
+            style: TextStyle(fontSize: 18, color: Colors.grey[400]),
+          ),
+          const SizedBox(height: 16),
+          CustomBtnPrimary(
+            glyph: const Icon(Icons.add),
+            tooltip: 'Add Files',
+            accent: accentColor,
+            label: 'Add Files',
+            action: () async {
+              await pickAudioOrVideo();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 
 class SectionTitle extends StatelessWidget {
   final String label;
@@ -204,62 +247,82 @@ class CustomTextbox extends StatelessWidget {
   }
 }
 
-class CustomBtnSecondary extends StatelessWidget {
+class CustomBtnBase extends StatelessWidget {
   final Icon glyph;
   final String tooltip;
-  final Color bg;
+  final Color accent;
   final VoidCallback action;
+  final String? label;
+  final bool isPrimary;
 
-  const CustomBtnSecondary({
+  const CustomBtnBase({
     super.key,
     required this.glyph,
     required this.tooltip,
-    required this.bg,
+    required this.accent,
     required this.action,
+    this.label,
+    this.isPrimary = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: IconButton(
-        icon: glyph,
-        tooltip: tooltip,
-        color: bg,
-        onPressed: action,
+    if (label == null) {
+      return Tooltip(
+        message: tooltip,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(50),
+          onTap: action,
+          child: Container(
+            decoration: BoxDecoration(
+              color: isPrimary ? accent : Colors.transparent,
+              shape: BoxShape.circle,
+            ),
+            padding: const EdgeInsets.all(12),
+            child: Icon(
+              glyph.icon,
+              color: isPrimary ? bgColor : accent, 
+              size: glyph.size ?? 18,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return TextButton.icon(
+      style: TextButton.styleFrom(
+        backgroundColor: isPrimary ? accent : Colors.transparent,
+        foregroundColor: isPrimary ? bgColor : accent,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
       ),
+      onPressed: action,
+      icon: glyph,
+      label: Text(label!),
     );
   }
 }
 
-class CustomBtnPrimary extends StatelessWidget {
-  final Icon glyph;
-  final String tooltip;
-  final Color bg;
-  final VoidCallback action;
+class CustomBtnSecondary extends CustomBtnBase {
+  const CustomBtnSecondary({
+    super.key,
+    required super.glyph,
+    required super.tooltip,
+    required super.accent,
+    required super.action,
+    super.label,
+  }) : super(isPrimary: false);
+}
 
+class CustomBtnPrimary extends CustomBtnBase {
   const CustomBtnPrimary({
     super.key,
-    required this.glyph,
-    required this.tooltip,
-    required this.bg,
-    required this.action,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(25),
-      ),
-      child: IconButton(
-        icon: glyph,
-        tooltip: tooltip,
-        color: bgColor,
-        onPressed: action,
-      ),
-    );
-  }
+    required super.glyph,
+    required super.tooltip,
+    required super.accent,
+    required super.action,
+    super.label,
+  }) : super(isPrimary: true);
 }
 
 class CustomRadio extends StatelessWidget {
@@ -351,14 +414,14 @@ class PromptOutput extends StatelessWidget {
 
 class ListItem extends StatelessWidget {
   final int id;
-  final String path;
+  final File file;
 
-  const ListItem({super.key, required this.id, required this.path});
+  const ListItem({super.key, required this.id, required this.file});
 
   @override
   Widget build(BuildContext context) {
-    final String name = p.basenameWithoutExtension(path);
-    // final String inputFormat = p.extension(path).replaceFirst('.', '');
+    final String name = p.basenameWithoutExtension(file.path);
+    final String inputFormat = p.extension(file.path).replaceFirst('.', '');
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -370,53 +433,30 @@ class ListItem extends StatelessWidget {
         spacing: 8,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(name, style: TextStyle(color: foregroundColor, fontSize: 18)),
           Row(
             spacing: 16,
             children: [
               Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 61, 61, 61),
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  child: Text(
-                    '100%',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: foregroundColor),
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      style: TextStyle(color: foregroundColor, fontSize: 18),
+                    ),
+                    Text(
+                      '$inputFormat → ${settingsNotifier.value.outputFormat}',
+                      style: TextStyle(color: foregroundColor),
+                    ),
+                  ],
                 ),
               ),
-              // Container(
-              //   padding: const EdgeInsets.all(8),
-              //   decoration: BoxDecoration(
-              //     color: const Color.fromARGB(255, 12, 141, 141),
-              //     borderRadius: BorderRadius.circular(10),
-              //   ),
-              //   child: Text(
-              //     inputFormat,
-              //     style: TextStyle(color: foregroundColor),
-              //   ),
-              // ),
-              // Container(
-              //   padding: const EdgeInsets.all(8),
-              //   decoration: BoxDecoration(
-              //     color: const Color(0xff1279b1),
-              //     borderRadius: BorderRadius.circular(10),
-              //   ),
-              //   child: Text(
-              //     settingsNotifier.value.outputFormat,
-              //     style: TextStyle(color: foregroundColor),
-              //   ),
-              // ),
               CustomBtnSecondary(
                 glyph: const Icon(Icons.delete),
                 tooltip: 'Delete Item',
-                bg: dangerColor,
-
+                accent: dangerColor,
                 action: () {
-                  // removeFile(file);
+                  removeFile(file);
                 },
               ),
             ],
@@ -448,7 +488,6 @@ class _MorfosisAppState extends State<MorfosisApp> {
   }
 
   void convertFiles() {}
-  void clearQueue() {}
   void deleteItem() {}
 
   @override
@@ -476,7 +515,7 @@ class _MorfosisAppState extends State<MorfosisApp> {
                         CustomBtnSecondary(
                           glyph: const Icon(Icons.add),
                           tooltip: 'Add Files',
-                          bg: accentColor,
+                          accent: accentColor,
                           action: () async {
                             await pickAudioOrVideo();
                           },
@@ -484,15 +523,13 @@ class _MorfosisAppState extends State<MorfosisApp> {
                         CustomBtnSecondary(
                           glyph: const Icon(Icons.cleaning_services),
                           tooltip: 'Clear Queue',
-                          bg: accentColor,
-
+                          accent: accentColor,
                           action: clearQueue,
                         ),
                         CustomBtnSecondary(
                           glyph: const Icon(Icons.settings),
                           tooltip: 'Settings',
-                          bg: accentColor,
-
+                          accent: accentColor,
                           action: () => navigateTo(1),
                         ),
                       ],
@@ -503,14 +540,20 @@ class _MorfosisAppState extends State<MorfosisApp> {
                     ValueListenableBuilder<List<File>>(
                       valueListenable: filesNotifier,
                       builder: (context, files, _) {
-                        return ListView(
+                        if (files.isEmpty) {
+                          return const EmptyList();
+                        }
+
+                        return ListView.separated(
                           shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          children: files.asMap().entries.map((entry) {
-                            final index = entry.key;
-                            final file = entry.value;
-                            return ListItem(path: file.path, id: index);
-                          }).toList(),
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: files.length,
+                          itemBuilder: (context, index) {
+                            final file = files[index];
+                            return ListItem(file: file, id: index);
+                          },
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 16),
                         );
                       },
                     ),
@@ -533,7 +576,7 @@ class _MorfosisAppState extends State<MorfosisApp> {
                         CustomBtnSecondary(
                           glyph: const Icon(Icons.close),
                           tooltip: 'Close Settings',
-                          bg: accentColor,
+                          accent: accentColor,
 
                           action: () => navigateTo(0),
                         ),
@@ -667,7 +710,7 @@ class _MorfosisAppState extends State<MorfosisApp> {
                 CustomBtnPrimary(
                   glyph: const Icon(Icons.swap_horiz),
                   tooltip: 'Convert Files',
-                  bg: accentColor,
+                  accent: accentColor,
 
                   action: convertFiles,
                 ),
