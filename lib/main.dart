@@ -1,19 +1,42 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
+import 'package:file_picker/file_picker.dart';
 
 void main() {
   runApp(const MorfosisApp());
 }
 
+Color darken(Color color, [double amount = .1]) {
+  assert(amount >= 0 && amount <= 1);
+
+  final hsl = HSLColor.fromColor(color);
+  final hslDark = hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0));
+
+  return hslDark.toColor();
+}
+
+Color lighten(Color color, [double amount = .1]) {
+  assert(amount >= 0 && amount <= 1);
+
+  final hsl = HSLColor.fromColor(color);
+  final hslLight = hsl.withLightness((hsl.lightness + amount).clamp(0.0, 1.0));
+
+  return hslLight.toColor();
+}
+
 const Color bgColor = Color.fromARGB(255, 20, 20, 20);
 const Color bgColor2 = Color.fromARGB(255, 25, 25, 25);
 const Color barColor = Color.fromARGB(255, 20, 25, 29);
-const Color detailsColor = Color.fromARGB(255, 150, 128, 233);
+const Color accentColor = Color.fromARGB(255, 170, 150, 241);
 const Color dangerColor = Color(0xffff8080);
 const Color foregroundColor = Color(0xffcccccc);
-const Color inputColor = Color.fromARGB(255, 118, 190, 140);
-const Color uncheckedColor = Color(0xFF386A68);
-const Color checkedColor = Color(0xFF689896);
+
+final Color uncheckedColor = darken(accentColor, .3);
+final Color checkedColor = accentColor;
+final Color inputColor = darken(accentColor, .4);
 
 class UiSettings {
   String outputFormat;
@@ -51,6 +74,16 @@ class UiSettings {
 }
 
 final ValueNotifier<UiSettings> settingsNotifier = ValueNotifier(UiSettings());
+
+final ValueNotifier<List<File>> filesNotifier = ValueNotifier([]);
+
+void addFile(File file) {
+  filesNotifier.value = [...filesNotifier.value, file];
+}
+
+void removeFile(fileFile file) {
+  filesNotifier.value = filesNotifier.value.where((f) => f != file).toList();
+}
 
 String buildComando(UiSettings settings) {
   String videoCodec = settings.videoCodec == 'Keep Original'
@@ -101,6 +134,24 @@ final prefixController = TextEditingController(
   text: settingsNotifier.value.outputPrefix,
 );
 
+Future<void> pickAudioOrVideo() async {
+  FilePickerResult? result = await FilePicker.platform.pickFiles(
+    type: FileType.custom,
+    allowMultiple: true,
+    allowedExtensions: formatList,
+  );
+
+  if (result != null) {
+    for (var platformFile in result.files) {
+      if (platformFile.path != null) {
+        addFile(File(platformFile.path!));
+      }
+    }
+  } else {
+    print("User canceled");
+  }
+}
+
 class SectionTitle extends StatelessWidget {
   final String label;
 
@@ -109,6 +160,47 @@ class SectionTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(label, style: TextStyle(color: foregroundColor, fontSize: 28));
+  }
+}
+
+class CustomTextbox extends StatelessWidget {
+  final TextEditingController ctrl;
+  final ValueChanged<String> onChanged;
+  final String label;
+
+  const CustomTextbox({
+    super.key,
+    required this.ctrl,
+    required this.onChanged,
+    required this.label,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      spacing: 16,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TextStyle(color: foregroundColor)),
+        TextField(
+          controller: ctrl,
+          style: const TextStyle(color: foregroundColor),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: inputColor,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 8,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+          ),
+          onChanged: onChanged,
+        ),
+      ],
+    );
   }
 }
 
@@ -323,7 +415,9 @@ class ListItem extends StatelessWidget {
                 tooltip: 'Delete Item',
                 bg: dangerColor,
 
-                action: () {},
+                action: () {
+                  // removeFile(file);
+                },
               ),
             ],
           ),
@@ -353,7 +447,6 @@ class _MorfosisAppState extends State<MorfosisApp> {
     _pageController.jumpToPage(index);
   }
 
-  void addFiles() {}
   void convertFiles() {}
   void clearQueue() {}
   void deleteItem() {}
@@ -383,21 +476,22 @@ class _MorfosisAppState extends State<MorfosisApp> {
                         CustomBtnSecondary(
                           glyph: const Icon(Icons.add),
                           tooltip: 'Add Files',
-                          bg: detailsColor,
-
-                          action: addFiles,
+                          bg: accentColor,
+                          action: () async {
+                            await pickAudioOrVideo();
+                          },
                         ),
                         CustomBtnSecondary(
                           glyph: const Icon(Icons.cleaning_services),
                           tooltip: 'Clear Queue',
-                          bg: detailsColor,
+                          bg: accentColor,
 
                           action: clearQueue,
                         ),
                         CustomBtnSecondary(
                           glyph: const Icon(Icons.settings),
                           tooltip: 'Settings',
-                          bg: detailsColor,
+                          bg: accentColor,
 
                           action: () => navigateTo(1),
                         ),
@@ -406,14 +500,19 @@ class _MorfosisAppState extends State<MorfosisApp> {
 
                     if (!errors.isEmpty) PromptOutput(output: errors),
 
-                    Column(
-                      spacing: 16,
-                      children: queue
-                          .map(
-                            (item) =>
-                                ListItem(path: item, id: queue.indexOf(item)),
-                          )
-                          .toList(),
+                    ValueListenableBuilder<List<File>>(
+                      valueListenable: filesNotifier,
+                      builder: (context, files, _) {
+                        return ListView(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          children: files.asMap().entries.map((entry) {
+                            final index = entry.key;
+                            final file = entry.value;
+                            return ListItem(path: file.path, id: index);
+                          }).toList(),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -432,16 +531,9 @@ class _MorfosisAppState extends State<MorfosisApp> {
                       children: [
                         Expanded(child: SectionTitle(label: 'Settings')),
                         CustomBtnSecondary(
-                          glyph: const Icon(Icons.autorenew),
-                          tooltip: 'Reset Settings',
-                          bg: detailsColor,
-
-                          action: clearQueue,
-                        ),
-                        CustomBtnSecondary(
                           glyph: const Icon(Icons.close),
                           tooltip: 'Close Settings',
-                          bg: detailsColor,
+                          bg: accentColor,
 
                           action: () => navigateTo(0),
                         ),
@@ -531,49 +623,17 @@ class _MorfosisAppState extends State<MorfosisApp> {
                         spacing: 16,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Prefix',
-                            style: TextStyle(color: foregroundColor),
-                          ),
-                          TextField(
-                            controller: prefixController,
-                            style: TextStyle(color: bgColor),
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: inputColor,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide.none,
-                              ),
-                            ),
+                          CustomTextbox(
+                            label: 'Prefix',
+                            ctrl: prefixController,
                             onChanged: (value) {
                               settingsNotifier.value = settingsNotifier.value
-                                  .copyWith(outputPrefix: value);
+                                  .copyWith(outputSuffix: value);
                             },
                           ),
-                          Text(
-                            'Suffix',
-                            style: TextStyle(color: foregroundColor),
-                          ),
-                          TextField(
-                            controller: suffixController,
-                            style: const TextStyle(color: bgColor),
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: inputColor,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide.none,
-                              ),
-                            ),
+                          CustomTextbox(
+                            label: 'Suffix',
+                            ctrl: suffixController,
                             onChanged: (value) {
                               settingsNotifier.value = settingsNotifier.value
                                   .copyWith(outputSuffix: value);
@@ -607,7 +667,7 @@ class _MorfosisAppState extends State<MorfosisApp> {
                 CustomBtnPrimary(
                   glyph: const Icon(Icons.swap_horiz),
                   tooltip: 'Convert Files',
-                  bg: detailsColor,
+                  bg: accentColor,
 
                   action: convertFiles,
                 ),

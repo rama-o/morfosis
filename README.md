@@ -1,3 +1,30 @@
+todo
+
+- delete file from the list
+- add spinner static (a straiht line) for when the file havent started
+- add spinner animation (an oscialting line) for when the file is beign process
+- emty list message with add files cta
+- confirmation message for deleting and clearing the queue
+- split main.dart
+
+
+-----------------------------------------------------------
+
+- open file manager and get actual file names
+- create themes from the accento color
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Rama
 
 ## Morfosis / FFMPEG converter
