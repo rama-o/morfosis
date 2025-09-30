@@ -112,24 +112,96 @@ String buildComando(UiSettings settings) {
   ].join(' ');
 }
 
-const formatList = [
-  'mp4',
-  'avi',
-  'webm',
-  'wmv',
-  'mov',
-  'mpeg',
-  'ogg',
-  'mp3',
-  'm4a',
-  'wav',
-  'wma',
-  'flac',
+class FormatOption {
+  final String label;
+  final String description;
+
+  const FormatOption({required this.label, required this.description});
+}
+
+// ----------------------------
+// Video Formats
+// ----------------------------
+const videoFormats = [
+  FormatOption(label: 'mp4', description: 'Most compatible video format'),
+  FormatOption(label: 'avi', description: 'Legacy format, widely supported'),
+  FormatOption(label: 'mov', description: 'Apple QuickTime format'),
+  FormatOption(label: 'webm', description: 'Web-friendly format'),
+  FormatOption(
+    label: 'mkv',
+    description: 'Advanced container, supports multiple codecs',
+  ),
+  FormatOption(label: 'flv', description: 'Streaming format'),
 ];
 
-const videoCodecList = ['Keep Original', 'libx264'];
+// Audio Formats
+const audioFormats = [
+  FormatOption(label: 'mp3', description: 'Most compatible audio format'),
+  FormatOption(label: 'm4a', description: 'Apple-friendly audio format'),
+  FormatOption(label: 'wav', description: 'Uncompressed audio'),
+  FormatOption(label: 'flac', description: 'Lossless audio format'),
+  FormatOption(label: 'ogg', description: 'Open source audio format'),
+];
 
-const audioCodecList = ['Keep Original', 'acc', 'ac3', 'mp3lame'];
+// ----------------------------
+// Codecs
+// ----------------------------
+const videoCodecs = [
+  FormatOption(label: 'Keep Original', description: 'Do not change the codec'),
+  FormatOption(label: 'libx264', description: 'H.264 video, widely supported'),
+  FormatOption(
+    label: 'libx265',
+    description: 'H.265/HEVC, smaller files, modern devices',
+  ),
+];
+
+const audioCodecs = [
+  FormatOption(label: 'Keep Original', description: 'Do not change the codec'),
+  FormatOption(
+    label: 'aac',
+    description: 'Modern, widely supported audio codec',
+  ),
+  FormatOption(label: 'ac3', description: 'Dolby Digital audio'),
+  FormatOption(label: 'libmp3lame', description: 'MP3 audio codec'),
+  FormatOption(label: 'flac', description: 'Lossless audio codec'),
+];
+
+// ----------------------------
+// Mapping for valid codecs per format
+// ----------------------------
+final Map<String, List<FormatOption>> formatToVideoCodecs = {
+  'mp4': [
+    videoCodecs[0],
+    videoCodecs[1],
+    videoCodecs[2],
+  ], // Keep Original, libx264, libx265
+  'avi': [videoCodecs[0], videoCodecs[1]],
+  'mov': [videoCodecs[0], videoCodecs[1], videoCodecs[2]],
+  'webm': [videoCodecs[0], videoCodecs[1]],
+  'mkv': [videoCodecs[0], videoCodecs[1], videoCodecs[2]],
+  'flv': [videoCodecs[0], videoCodecs[1]],
+};
+
+final Map<String, List<FormatOption>> formatToAudioCodecs = {
+  'mp3': [audioCodecs[0], audioCodecs[3]], // Keep Original, libmp3lame
+  'm4a': [audioCodecs[0], audioCodecs[1]], // Keep Original, aac
+  'wav': [audioCodecs[0]],
+  'flac': [audioCodecs[0], audioCodecs[4]],
+  'ogg': [audioCodecs[0], audioCodecs[1]],
+};
+
+// ----------------------------
+// Helper functions
+// ----------------------------
+List<FormatOption> getVideoCodecsForFormat(String format) {
+  return formatToVideoCodecs[format] ?? [videoCodecs[0]];
+}
+
+List<FormatOption> getAudioCodecsForFormat(String format) {
+  return formatToAudioCodecs[format] ?? [audioCodecs[0]];
+}
+
+//---------------------------------------------------
 
 final suffixController = TextEditingController(
   text: settingsNotifier.value.outputSuffix,
@@ -143,7 +215,27 @@ Future<void> pickAudioOrVideo() async {
   FilePickerResult? result = await FilePicker.platform.pickFiles(
     type: FileType.custom,
     allowMultiple: true,
-    allowedExtensions: formatList,
+    allowedExtensions: [
+      'mp4',
+      'avi',
+      'mov',
+      'mpeg',
+      'mpg',
+      'flv',
+      'webm',
+      'wmv',
+      'flv',
+
+      'wma',
+      'mkv',
+      'mp3',
+      'm4a',
+      'wav',
+      'flac',
+      'ogg',
+      'aac',
+      'opus',
+    ],
   );
 
   if (result != null) {
@@ -163,14 +255,14 @@ class EmptyList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity, // full width
+      width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: bgColor2,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center, // horizontal centering
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Icon(Icons.inbox, size: 48, color: Colors.grey),
           const SizedBox(height: 8),
@@ -193,7 +285,6 @@ class EmptyList extends StatelessWidget {
     );
   }
 }
-
 
 class SectionTitle extends StatelessWidget {
   final String label;
@@ -281,7 +372,7 @@ class CustomBtnBase extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             child: Icon(
               glyph.icon,
-              color: isPrimary ? bgColor : accent, 
+              color: isPrimary ? bgColor : accent,
               size: glyph.size ?? 18,
             ),
           ),
@@ -325,14 +416,51 @@ class CustomBtnPrimary extends CustomBtnBase {
   }) : super(isPrimary: true);
 }
 
-class CustomRadio extends StatelessWidget {
-  final String value;
+// class CustomRadio extends StatelessWidget {
+//   final String value;
+//   final String Function(UiSettings) selector;
+//   final UiSettings Function(UiSettings, String) updater;
+
+//   const CustomRadio({
+//     super.key,
+//     required this.value,
+//     required this.selector,
+//     required this.updater,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return ValueListenableBuilder<UiSettings>(
+//       valueListenable: settingsNotifier,
+//       builder: (context, settings, _) {
+//         final groupValue = selector(settings);
+//         return RadioListTile<String>(
+//           title: Text(value, style: TextStyle(color: foregroundColor)),
+//           value: value,
+//           groupValue: groupValue,
+//           onChanged: (val) {
+//             if (val != null) {
+//               settingsNotifier.value = updater(settings, val);
+//             }
+//           },
+//           fillColor: MaterialStateProperty.resolveWith<Color>((states) {
+//             if (states.contains(MaterialState.selected)) return checkedColor;
+//             return uncheckedColor;
+//           }),
+//         );
+//       },
+//     );
+//   }
+// }
+
+class CustomRadioOption extends StatelessWidget {
+  final FormatOption option;
   final String Function(UiSettings) selector;
   final UiSettings Function(UiSettings, String) updater;
 
-  const CustomRadio({
+  const CustomRadioOption({
     super.key,
-    required this.value,
+    required this.option,
     required this.selector,
     required this.updater,
   });
@@ -344,8 +472,17 @@ class CustomRadio extends StatelessWidget {
       builder: (context, settings, _) {
         final groupValue = selector(settings);
         return RadioListTile<String>(
-          title: Text(value, style: TextStyle(color: foregroundColor)),
-          value: value,
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(option.label, style: TextStyle(color: foregroundColor)),
+              Text(
+                option.description,
+                style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+              ),
+            ],
+          ),
+          value: option.label,
           groupValue: groupValue,
           onChanged: (val) {
             if (val != null) {
@@ -595,15 +732,22 @@ class _MorfosisAppState extends State<MorfosisApp> {
                         color: bgColor2,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Column(
-                        children: formatList.map((format) {
-                          return CustomRadio(
-                            value: format,
-                            selector: (settings) => settings.outputFormat,
-                            updater: (settings, val) =>
-                                settings.copyWith(outputFormat: val),
+                      child: ValueListenableBuilder<UiSettings>(
+                        valueListenable: settingsNotifier,
+                        builder: (context, settings, _) {
+                          final availableFormats = [...audioFormats, ...videoFormats];
+
+                          return Column(
+                            children: availableFormats.map((formats) {
+                              return CustomRadioOption(
+                                option: formats,
+                                selector: (s) => s.outputFormat,
+                                updater: (s, val) =>
+                                    s.copyWith(outputFormat: val),
+                              );
+                            }).toList(),
                           );
-                        }).toList(),
+                        },
                       ),
                     ),
 
@@ -617,15 +761,25 @@ class _MorfosisAppState extends State<MorfosisApp> {
                         color: bgColor2,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Column(
-                        children: videoCodecList.map((videoCodec) {
-                          return CustomRadio(
-                            value: videoCodec,
-                            selector: (settings) => settings.videoCodec,
-                            updater: (settings, val) =>
-                                settings.copyWith(videoCodec: val),
+                      child: ValueListenableBuilder<UiSettings>(
+                        valueListenable: settingsNotifier,
+                        builder: (context, settings, _) {
+                          final selectedFormat = settings.outputFormat;
+                          final availableCodecs = getVideoCodecsForFormat(
+                            selectedFormat,
                           );
-                        }).toList(),
+
+                          return Column(
+                            children: availableCodecs.map((codecOption) {
+                              return CustomRadioOption(
+                                option: codecOption,
+                                selector: (s) => s.videoCodec,
+                                updater: (s, val) =>
+                                    s.copyWith(videoCodec: val),
+                              );
+                            }).toList(),
+                          );
+                        },
                       ),
                     ),
 
@@ -639,15 +793,25 @@ class _MorfosisAppState extends State<MorfosisApp> {
                         color: bgColor2,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Column(
-                        children: audioCodecList.map((audioCodec) {
-                          return CustomRadio(
-                            value: audioCodec,
-                            selector: (settings) => settings.audioCodec,
-                            updater: (settings, val) =>
-                                settings.copyWith(audioCodec: val),
+                      child: ValueListenableBuilder<UiSettings>(
+                        valueListenable: settingsNotifier,
+                        builder: (context, settings, _) {
+                          final selectedFormat = settings.outputFormat;
+                          final availableCodecs = getAudioCodecsForFormat(
+                            selectedFormat,
                           );
-                        }).toList(),
+
+                          return Column(
+                            children: availableCodecs.map((codecOption) {
+                              return CustomRadioOption(
+                                option: codecOption,
+                                selector: (s) => s.audioCodec,
+                                updater: (s, val) =>
+                                    s.copyWith(audioCodec: val),
+                              );
+                            }).toList(),
+                          );
+                        },
                       ),
                     ),
 
