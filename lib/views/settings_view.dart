@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme.dart';
-import '../state/settings_notifier.dart';
+import '../state/notifier.dart';
 import '../models/ui_settings.dart';
 import '../utils/codec_mappings.dart';
 import '../widgets/radio_option.dart';
@@ -18,14 +18,9 @@ final prefixController = TextEditingController(
 );
 
 class SettingsView extends StatelessWidget {
-  final List<String> errors;
   final void Function(int) navigateTo;
 
-  const SettingsView({
-    super.key,
-    required this.errors,
-    required this.navigateTo,
-  });
+  const SettingsView({super.key, required this.navigateTo});
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +31,7 @@ class SettingsView extends StatelessWidget {
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
+              spacing: 16,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
@@ -52,7 +48,16 @@ class SettingsView extends StatelessWidget {
                   ],
                 ),
 
-                if (errors.isNotEmpty) PromptOutput(output: errors),
+                ValueListenableBuilder<List<String>>(
+                  valueListenable: errorsNotifier,
+                  builder: (context, errors, _) {
+                    if (errorsNotifier.value.isNotEmpty) {
+                      return PromptOutput(output: errorsNotifier.value);
+                    }
+
+                    return const SizedBox(height: 16);
+                  },
+                ),
 
                 Text(
                   'Format',

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme.dart';
-import '../state/settings_notifier.dart';
+import '../state/notifier.dart';
 import 'button_secondary.dart';
 import '../utils/file_utils.dart';
 import 'package:path/path.dart' as p;

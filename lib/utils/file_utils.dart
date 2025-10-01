@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart' as p;
-import '../state/settings_notifier.dart';
+import '../state/notifier.dart';
 
 void addFile(File file) {
   final updatedFiles = [...filesNotifier.value, file];
@@ -31,7 +31,6 @@ Future<void> pickAudioOrVideo() async {
       'flv',
       'webm',
       'wmv',
-      '3gp',
       'm4v',
       'rm',
       'rmvb',
@@ -41,6 +40,8 @@ Future<void> pickAudioOrVideo() async {
       'ts',
       'f4v',
       'divx',
+      '3gp',
+      '3g2',
 
       'wma',
       'mkv',

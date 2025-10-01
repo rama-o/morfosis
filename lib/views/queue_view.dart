@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import '../widgets/empty_list.dart';
 import '../widgets/list_item.dart';
-import '../state/settings_notifier.dart';
+import '../state/notifier.dart';
 import '../widgets/button_secondary.dart';
 import '../theme.dart';
 import '../widgets/section_title.dart';
@@ -10,10 +10,9 @@ import '../utils/file_utils.dart';
 import '../widgets/prompt_output.dart';
 
 class QueueView extends StatelessWidget {
-  final List<String> errors;
   final void Function(int) navigateTo;
 
-  const QueueView({super.key, required this.errors, required this.navigateTo});
+  const QueueView({super.key, required this.navigateTo});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +50,16 @@ class QueueView extends StatelessWidget {
               ],
             ),
 
-            if (errors.isNotEmpty) PromptOutput(output: errors),
+            ValueListenableBuilder<List<String>>(
+              valueListenable: errorsNotifier,
+              builder: (context, errors, _) {
+                if (errorsNotifier.value.isEmpty) {
+                return const SizedBox(height: 0);
+                }
+
+                return PromptOutput(output: errorsNotifier.value);
+              },
+            ),
 
             ValueListenableBuilder<List<File>>(
               valueListenable: filesNotifier,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme.dart';
-import '../state/settings_notifier.dart';
+import '../state/notifier.dart';
 import '../models/ui_settings.dart';
 import '../models/format_option.dart';
 

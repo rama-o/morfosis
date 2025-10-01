@@ -1,18 +1,27 @@
 import '../models/ui_settings.dart';
-import '../state/settings_notifier.dart';
+import '../state/notifier.dart';
+import 'package:path/path.dart' as p;
 
 String buildComando() {
-  String videoCodec = settingsNotifier.value.videoCodec == 'Keep Original'
+  final videoCodec = settingsNotifier.value.videoCodec == 'Keep Original'
       ? ''
       : '-c:v ${settingsNotifier.value.videoCodec}';
-  String audioCodec = settingsNotifier.value.audioCodec == 'Keep Original'
+  final audioCodec = settingsNotifier.value.audioCodec == 'Keep Original'
       ? ''
       : '-c:a ${settingsNotifier.value.audioCodec}';
 
+  final output = p.join(
+    'storage',
+    'emulated',
+    '0',
+    'Documents',
+    '${settingsNotifier.value.outputPrefix}<FILE_NAME>${settingsNotifier.value.outputSuffix}.${settingsNotifier.value.outputFormat}',
+  );
+
   return [
-    'ffmpeg -i <filePath>',
+    'ffmpeg -i <FILE_PATH>',
     videoCodec,
     audioCodec,
-    '${settingsNotifier.value.outputPrefix}<fileName>${settingsNotifier.value.outputSuffix}.${settingsNotifier.value.outputFormat}',
-  ].join(' ');
+    '"${output}"',
+  ].where((e) => e.isNotEmpty).join(' ');
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:morfosis/utils/errors_utils.dart';
 import 'package:path/path.dart' as p;
 import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter_new/return_code.dart';
@@ -7,7 +8,7 @@ import '../theme.dart';
 import '../views/queue_view.dart';
 import '../views/settings_view.dart';
 import '../widgets/button_primary.dart';
-import '../state/settings_notifier.dart';
+import '../state/notifier.dart';
 import '../widgets/code_input.dart';
 import '../models/ui_settings.dart';
 import '../utils/command_builder.dart';
@@ -22,56 +23,70 @@ class MorfosisApp extends StatefulWidget {
 class _MorfosisAppState extends State<MorfosisApp> {
   final PageController _pageController = PageController();
   int currentViewIndex = 0;
-  List<String> errors = [];
 
   void navigateTo(int index) {
     setState(() => currentViewIndex = index);
     _pageController.jumpToPage(index);
   }
 
-Future<void> convertFiles() async {
-  for (final file in filesNotifier.value) {
-    final input = file.path;
-    final name = p.basenameWithoutExtension(input);
-    final dir = p.dirname(input);
+  Future<void> convertFiles() async {
+    clearErrors();
 
-    final output = p.join(
-      dir,
-      '${settingsNotifier.value.outputPrefix}$name${settingsNotifier.value.outputSuffix}.${settingsNotifier.value.outputFormat}',
-    );
+    for (final file in filesNotifier.value) {
+      final input = file.path;
+      final name = p.basenameWithoutExtension(input);
+      // final dir = p.dirname(input);
 
-    // Only include codec options if not "Keep Original"
-    final videoCodecOption = settingsNotifier.value.videoCodec != 'Keep Original'
-        ? ['-c:v', settingsNotifier.value.videoCodec]
-        : [];
-    final audioCodecOption = settingsNotifier.value.audioCodec != 'Keep Original'
-        ? ['-c:a', settingsNotifier.value.audioCodec]
-        : [];
+      final output = p.join(
+        'storage',
+        'emulated',
+        '0',
+        'Documents',
+        '${settingsNotifier.value.outputPrefix}$name${settingsNotifier.value.outputSuffix}.${settingsNotifier.value.outputFormat}',
+      );
 
-    // Build command as a list to handle spaces in paths
-    final commandList = [
-      '-i',
-      input,
-      ...videoCodecOption,
-      ...audioCodecOption,
-      output,
-    ];
+      final videoCodecOption =
+          settingsNotifier.value.videoCodec != 'Keep Original'
+          ? ['-c:v', settingsNotifier.value.videoCodec]
+          : [];
+      final audioCodecOption =
+          settingsNotifier.value.audioCodec != 'Keep Original'
+          ? ['-c:a', settingsNotifier.value.audioCodec]
+          : [];
 
-    final command = commandList.map((e) => '"$e"').join(' '); // Quote each arg
+      final commandList = [
+        '-i "${input}"',
+        ...videoCodecOption,
+        ...audioCodecOption,
+        '"${output}"',
+      ];
 
-    print('-------------------- Running command: $command');
+      final command = commandList.join(' ');
 
-    final session = await FFmpegKit.execute(command);
+      print('-------------------- Running command: $command');
 
-    final returnCode = await session.getReturnCode();
-    if (ReturnCode.isSuccess(returnCode)) {
-      print('✅ Conversion finished: $output');
-    } else {
-      print('❌ Conversion failed for $input, rc = $returnCode');
+      await FFmpegKit.executeAsync(
+        command,
+        (session) async {
+          final returnCode = await session.getReturnCode();
+          if (ReturnCode.isSuccess(returnCode)) {
+            print('✅ Conversion finished: $output');
+          } else {
+            addError('Conversion failed for $input, rc = $returnCode');
+          }
+        },
+        (log) {
+          // Optional: log FFmpeg messages in real-time
+          print(log.getMessage());
+        },
+        (statistics) {
+          // Optional: show progress info
+          // print(
+          //     'Progress: frame=${statistics.getFrame()}, time=${statistics.getTime()}ms');
+        },
+      );
     }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -84,8 +99,8 @@ Future<void> convertFiles() async {
             setState(() => currentViewIndex = index);
           },
           children: [
-            QueueView(errors: errors, navigateTo: navigateTo),
-            SettingsView(errors: errors, navigateTo: navigateTo),
+            QueueView(navigateTo: navigateTo),
+            SettingsView(navigateTo: navigateTo),
           ],
         ),
         bottomNavigationBar: SafeArea(
