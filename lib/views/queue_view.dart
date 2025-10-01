@@ -41,11 +41,34 @@ class QueueView extends StatelessWidget {
                   accent: accentColor,
                   action: clearQueue,
                 ),
-                CustomBtnSecondary(
-                  glyph: const Icon(Icons.settings),
-                  tooltip: 'Settings',
-                  accent: accentColor,
-                  action: () => navigateTo(1),
+
+                PopupMenuButton<int>(
+                  color: bgColor2,
+                  icon: const Icon(
+                    Icons.settings,
+                    size: 16,
+                    color: accentColor,
+                  ),
+                  tooltip: 'Navigate to section',
+                  onSelected: (int value) {
+                    navigateTo(value);
+                  },
+                  itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+                    const PopupMenuItem<int>(
+                      value: 1,
+                      child: Text(
+                        'Settings',
+                        style: TextStyle(fontSize: 16, color: foregroundColor),
+                      ),
+                    ),
+                    const PopupMenuItem<int>(
+                      value: 2,
+                      child: Text(
+                        'About',
+                        style: TextStyle(fontSize: 16, color: foregroundColor),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -54,7 +77,7 @@ class QueueView extends StatelessWidget {
               valueListenable: errorsNotifier,
               builder: (context, errors, _) {
                 if (errorsNotifier.value.isEmpty) {
-                return const SizedBox(height: 0);
+                  return const SizedBox(height: 0);
                 }
 
                 return PromptOutput(output: errorsNotifier.value);

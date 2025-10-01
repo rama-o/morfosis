@@ -5,13 +5,17 @@ import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter_new/return_code.dart';
 
 import '../theme.dart';
-import '../views/queue_view.dart';
-import '../views/settings_view.dart';
+import 'dart:io';
+
 import '../widgets/button_primary.dart';
 import '../state/notifier.dart';
 import '../widgets/code_input.dart';
 import '../models/ui_settings.dart';
 import '../utils/command_builder.dart';
+
+import '../views/queue_view.dart';
+import '../views/settings_view.dart';
+import '../views/about_view.dart';
 
 class MorfosisApp extends StatefulWidget {
   const MorfosisApp({super.key});
@@ -91,8 +95,13 @@ class _MorfosisAppState extends State<MorfosisApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      darkTheme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: bgColor,
+        iconTheme: const IconThemeData(color: foregroundColor),
+        textTheme: ThemeData.dark().textTheme.apply(bodyColor: foregroundColor),
+      ),
+      themeMode: ThemeMode.dark,
       home: Scaffold(
-        backgroundColor: bgColor,
         body: PageView(
           controller: _pageController,
           onPageChanged: (index) {
@@ -101,6 +110,7 @@ class _MorfosisAppState extends State<MorfosisApp> {
           children: [
             QueueView(navigateTo: navigateTo),
             SettingsView(navigateTo: navigateTo),
+            AboutView(navigateTo: navigateTo),
           ],
         ),
         bottomNavigationBar: SafeArea(
@@ -119,13 +129,35 @@ class _MorfosisAppState extends State<MorfosisApp> {
                   ),
                 ),
 
-                CustomBtnPrimary(
-                  glyph: const Icon(Icons.swap_horiz),
-                  tooltip: 'Convert Files',
-                  accent: accentColor,
+                ValueListenableBuilder<List<File>>(
+                  valueListenable: filesNotifier,
+                  builder: (context, file, _) {
+                    if (filesNotifier.value.isEmpty) {
+                      return CustomBtnPrimary(
+                        glyph: const Icon(Icons.swap_horiz),
+                        tooltip: 'Convert Files',
+                        accent: disabledColor,
+                        action: () {},
+                      );
+                    }
 
-                  action: convertFiles,
+                    return CustomBtnPrimary(
+                      glyph: const Icon(Icons.swap_horiz),
+                      tooltip: 'Convert Files',
+                      accent: accentColor,
+
+                      action: convertFiles,
+                    );
+                  },
                 ),
+
+                // CustomBtnPrimary(
+                //   glyph: const Icon(Icons.swap_horiz),
+                //   tooltip: 'Convert Files',
+                //   accent: accentColor,
+
+                //   action: convertFiles,
+                // ),
               ],
             ),
           ),
