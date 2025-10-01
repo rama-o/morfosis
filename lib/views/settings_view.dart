@@ -52,7 +52,7 @@ class SettingsView extends StatelessWidget {
                   ],
                 ),
 
-                if (!errors.isEmpty) PromptOutput(output: errors),
+                if (errors.isNotEmpty) PromptOutput(output: errors),
 
                 Text(
                   'Format',
@@ -167,7 +167,7 @@ class SettingsView extends StatelessWidget {
                         ctrl: prefixController,
                         onChanged: (value) {
                           settingsNotifier.value = settingsNotifier.value
-                              .copyWith(outputSuffix: value);
+                              .copyWith(outputPrefix: value);
                         },
                       ),
                       CustomTextbox(

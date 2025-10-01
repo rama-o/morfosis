@@ -1,17 +1,18 @@
 import '../models/ui_settings.dart';
+import '../state/settings_notifier.dart';
 
-String buildComando(UiSettings settings) {
-  String videoCodec = settings.videoCodec == 'Keep Original'
+String buildComando() {
+  String videoCodec = settingsNotifier.value.videoCodec == 'Keep Original'
       ? ''
-      : '-c:v ${settings.videoCodec}';
-  String audioCodec = settings.audioCodec == 'Keep Original'
+      : '-c:v ${settingsNotifier.value.videoCodec}';
+  String audioCodec = settingsNotifier.value.audioCodec == 'Keep Original'
       ? ''
-      : '-c:a ${settings.audioCodec}';
+      : '-c:a ${settingsNotifier.value.audioCodec}';
 
   return [
-    'ffmpeg -i *',
+    'ffmpeg -i <filePath>',
     videoCodec,
     audioCodec,
-    '${settings.outputPrefix}<fileName>${settings.outputSuffix}.${settings.outputFormat}',
+    '${settingsNotifier.value.outputPrefix}<fileName>${settingsNotifier.value.outputSuffix}.${settingsNotifier.value.outputFormat}',
   ].join(' ');
 }

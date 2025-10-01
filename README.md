@@ -1,15 +1,24 @@
 todo
 
-- delete file from the list
+- connect ffmpeg with dart
+
+
 - add spinner static (a straiht line) for when the file havent started
 - add spinner animation (an oscialting line) for when the file is beign process
-- emty list message with add files cta
 - confirmation message for deleting and clearing the queue
-- split main.dart
-
+- make the whole empty list item clickable
+- remove error promp section
+- add about morfosis section
+- add menu in the corner to access multiple sections
+- add tests
 
 -----------------------------------------------------------
 
+- split main.dart
+- empty list message with add files cta
+- prevent duplication
+- clear list
+- delete file from the list
 - open file manager and get actual file names
 - create themes from the accento color
 

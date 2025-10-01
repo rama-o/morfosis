@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as p;
+import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
+import 'package:ffmpeg_kit_flutter_new/return_code.dart';
+
 import '../theme.dart';
 import '../views/queue_view.dart';
 import '../views/settings_view.dart';
@@ -25,7 +29,49 @@ class _MorfosisAppState extends State<MorfosisApp> {
     _pageController.jumpToPage(index);
   }
 
-  void convertFiles() {}
+Future<void> convertFiles() async {
+  for (final file in filesNotifier.value) {
+    final input = file.path;
+    final name = p.basenameWithoutExtension(input);
+    final dir = p.dirname(input);
+
+    final output = p.join(
+      dir,
+      '${settingsNotifier.value.outputPrefix}$name${settingsNotifier.value.outputSuffix}.${settingsNotifier.value.outputFormat}',
+    );
+
+    // Only include codec options if not "Keep Original"
+    final videoCodecOption = settingsNotifier.value.videoCodec != 'Keep Original'
+        ? ['-c:v', settingsNotifier.value.videoCodec]
+        : [];
+    final audioCodecOption = settingsNotifier.value.audioCodec != 'Keep Original'
+        ? ['-c:a', settingsNotifier.value.audioCodec]
+        : [];
+
+    // Build command as a list to handle spaces in paths
+    final commandList = [
+      '-i',
+      input,
+      ...videoCodecOption,
+      ...audioCodecOption,
+      output,
+    ];
+
+    final command = commandList.map((e) => '"$e"').join(' '); // Quote each arg
+
+    print('-------------------- Running command: $command');
+
+    final session = await FFmpegKit.execute(command);
+
+    final returnCode = await session.getReturnCode();
+    if (ReturnCode.isSuccess(returnCode)) {
+      print('✅ Conversion finished: $output');
+    } else {
+      print('❌ Conversion failed for $input, rc = $returnCode');
+    }
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -38,14 +84,8 @@ class _MorfosisAppState extends State<MorfosisApp> {
             setState(() => currentViewIndex = index);
           },
           children: [
-            QueueView(
-              errors: errors,
-              navigateTo: navigateTo,
-            ),
-            SettingsView(
-              errors: errors,
-              navigateTo: navigateTo,
-            ),
+            QueueView(errors: errors, navigateTo: navigateTo),
+            SettingsView(errors: errors, navigateTo: navigateTo),
           ],
         ),
         bottomNavigationBar: SafeArea(
@@ -59,7 +99,7 @@ class _MorfosisAppState extends State<MorfosisApp> {
                   child: ValueListenableBuilder<UiSettings>(
                     valueListenable: settingsNotifier,
                     builder: (context, settings, _) {
-                      return CodeInput(output: buildComando(settings));
+                      return CodeInput(output: buildComando());
                     },
                   ),
                 ),

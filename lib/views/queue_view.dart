@@ -51,7 +51,7 @@ class QueueView extends StatelessWidget {
               ],
             ),
 
-            if (!errors.isEmpty) PromptOutput(output: errors),
+            if (errors.isNotEmpty) PromptOutput(output: errors),
 
             ValueListenableBuilder<List<File>>(
               valueListenable: filesNotifier,

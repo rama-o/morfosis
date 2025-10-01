@@ -7,10 +7,10 @@ class UiSettings {
 
   UiSettings({
     this.outputFormat = 'mp4',
-    this.videoCodec = 'libx264',
-    this.audioCodec = 'ac3',
-    this.outputPrefix = '',
-    this.outputSuffix = '.copy',
+    this.videoCodec = 'Keep Original',
+    this.audioCodec = 'Keep Original',
+    this.outputPrefix = 'mor_',
+    this.outputSuffix = '',
   });
 
   UiSettings copyWith({
@@ -19,6 +19,7 @@ class UiSettings {
     String? audioCodec,
     String? outputPrefix,
     String? outputSuffix,
+    String? command,
   }) {
     return UiSettings(
       outputFormat: outputFormat ?? this.outputFormat,
