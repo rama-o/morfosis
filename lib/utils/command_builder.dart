@@ -1,4 +1,3 @@
-import '../models/ui_settings.dart';
 import '../state/notifier.dart';
 import 'package:path/path.dart' as p;
 

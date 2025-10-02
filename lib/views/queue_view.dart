@@ -8,6 +8,7 @@ import '../theme.dart';
 import '../widgets/section_title.dart';
 import '../utils/file_utils.dart';
 import '../widgets/prompt_output.dart';
+import '../models/file_item.dart';
 
 class QueueView extends StatelessWidget {
   final void Function(int) navigateTo;
@@ -84,23 +85,24 @@ class QueueView extends StatelessWidget {
               },
             ),
 
-            ValueListenableBuilder<List<File>>(
+            ValueListenableBuilder<List<FileItem>>(
               valueListenable: filesNotifier,
-              builder: (context, files, _) {
-                if (files.isEmpty) {
-                  return const EmptyList();
-                }
+              builder: (context, fileItems, _) {
+                if (fileItems.isEmpty) return const EmptyList();
 
                 return ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: files.length,
+                  itemCount: fileItems.length,
                   itemBuilder: (context, index) {
-                    final file = files[index];
-                    return ListItem(file: file, id: index);
+                    final fileItem = fileItems[index];
+                    return ListItem(
+                      id: index,
+                      file: fileItem.file,
+                      progress: fileItem.progress,
+                    );
                   },
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 16),
+                  separatorBuilder: (_, __) => const SizedBox(height: 16),
                 );
               },
             ),

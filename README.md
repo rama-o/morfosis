@@ -1,19 +1,18 @@
 todo
 
-- connect ffmpeg with dart
-
-
-- add spinner static (a straiht line) for when the file havent started
-- add spinner animation (an oscialting line) for when the file is beign process
 - confirmation message for deleting and clearing the queue
-- make the whole empty list item clickable
-- remove error promp section
-- add about morfosis section
-- add menu in the corner to access multiple sections
 - add tests
+- message for begin processing
+- test converting each video individually
+- show omitted error
 
 -----------------------------------------------------------
 
+- add spinner animation (an oscialting line) for when the file is beign process
+- add spinner static (a straiht line) for when the file havent started
+- connect ffmpeg with dart
+- add menu in the corner to access multiple sections
+- add about morfosis section
 - split main.dart
 - empty list message with add files cta
 - prevent duplication

@@ -5,12 +5,19 @@ import 'button_secondary.dart';
 import '../utils/file_utils.dart';
 import 'package:path/path.dart' as p;
 import 'dart:io';
+// import '../models/file_item.dart';
 
 class ListItem extends StatelessWidget {
   final int id;
   final File file;
+  final int progress;
 
-  const ListItem({super.key, required this.id, required this.file});
+  const ListItem({
+    super.key,
+    required this.id,
+    required this.file,
+    required this.progress,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +31,9 @@ class ListItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
-        spacing: 8,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            spacing: 16,
             children: [
               Expanded(
                 child: Column(
@@ -42,9 +47,18 @@ class ListItem extends StatelessWidget {
                       '$inputFormat → ${settingsNotifier.value.outputFormat}',
                       style: TextStyle(color: foregroundColor),
                     ),
+                    const SizedBox(height: 8),
+                    LinearProgressIndicator(
+                      value: progress / 100,
+                      backgroundColor: Colors.grey.shade700,
+                      valueColor: AlwaysStoppedAnimation<Color>(accentColor2),
+                      minHeight: 6,
+                      semanticsLabel: '${progress}%',
+                    ),
                   ],
                 ),
               ),
+              const SizedBox(width: 16),
               CustomBtnSecondary(
                 glyph: const Icon(Icons.delete),
                 tooltip: 'Delete Item',
