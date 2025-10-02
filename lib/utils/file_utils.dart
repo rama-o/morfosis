@@ -34,10 +34,11 @@ void clearQueue() {
 
 void updateProgress(String filePath, int progress) {
   final updatedFiles = filesNotifier.value
-      .map((fileItem) =>
-          fileItem.file.path == filePath
-              ? fileItem.copyWith(progress: progress)
-              : fileItem)
+      .map(
+        (fileItem) => fileItem.file.path == filePath
+            ? fileItem.copyWith(progress: progress)
+            : fileItem,
+      )
       .toList();
 
   filesNotifier.value = [...updatedFiles];
@@ -45,10 +46,11 @@ void updateProgress(String filePath, int progress) {
 
 void markFileDone(String filePath) {
   final updatedFiles = filesNotifier.value
-      .map((fileItem) =>
-          fileItem.file.path == filePath
-              ? fileItem.copyWith(progress: 100)
-              : fileItem)
+      .map(
+        (fileItem) => fileItem.file.path == filePath
+            ? fileItem.copyWith(progress: 100)
+            : fileItem,
+      )
       .toList();
 
   filesNotifier.value = [...updatedFiles];
@@ -178,7 +180,7 @@ Future<void> _convertSingleFile(FileItem fileItem) async {
       final returnCode = await session.getReturnCode();
 
       if (ReturnCode.isSuccess(returnCode)) {
-        markFileDone(fileItem.file.path); // ✅ UI updates when done
+        markFileDone(fileItem.file.path);
         print('✅ Conversion finished: $output');
       } else {
         addError('❌ Conversion failed for $input (code $returnCode)');
@@ -193,10 +195,7 @@ Future<void> _convertSingleFile(FileItem fileItem) async {
       if (duration > 0) {
         final time = statistics.getTime();
         final progress = ((time / duration) * 100).clamp(0, 100).toInt();
-        updateProgress(
-          fileItem.file.path,
-          progress,
-        );
+        updateProgress(fileItem.file.path, progress);
       }
     },
   );
