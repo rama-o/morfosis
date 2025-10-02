@@ -62,7 +62,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - "img/morfosis.png"
+    - "img/morfosis_brand.png"
 
 flutter_launcher_icons:
   image_path: "img/morfosis.png"

@@ -58,11 +58,11 @@
      inkscape:groupmode="layer"
      id="layer1">
     <g
-       id="g3884"
-       transform="matrix(0.79551932,0,0,0.79551932,90.390709,115.67385)">
+       id="g8510"
+       transform="translate(-6.0000025)">
       <g
          id="g2895"
-         transform="matrix(1.0443706,0,0,1.0443706,-21.072026,-20.793203)">
+         transform="matrix(0.83081699,0,0,0.83081699,73.627505,99.132455)">
         <path
            id="rect629"
            style="fill:#c992df;fill-opacity:1;stroke-width:1.9888;stroke-linecap:round;stroke-linejoin:round"
@@ -79,7 +79,7 @@
       </g>
       <g
          id="g2907"
-         transform="matrix(-1.0443706,0,0,1.0443706,799.45486,-20.793203)">
+         transform="matrix(-0.83081699,0,0,0.83081699,738.3725,99.132455)">
         <path
            id="path2903"
            style="fill:#c992df;fill-opacity:1;stroke-width:1.9888;stroke-linecap:round;stroke-linejoin:round"
@@ -96,7 +96,7 @@
       </g>
       <g
          id="g2901"
-         transform="matrix(0.82814798,0,0,-0.82814798,63.866453,766.80066)">
+         transform="matrix(0.65880772,0,0,-0.65880772,141.19771,737.67859)">
         <path
            id="path2897"
            style="fill:#c992df;fill-opacity:1;stroke-width:1.9888;stroke-linecap:round;stroke-linejoin:round"
@@ -113,7 +113,7 @@
       </g>
       <g
          id="g2913"
-         transform="matrix(-0.82814798,0,0,-0.82814798,714.51638,766.80066)">
+         transform="matrix(-0.65880772,0,0,-0.65880772,670.80229,737.67859)">
         <path
            id="path2909"
            style="fill:#c992df;fill-opacity:1;stroke-width:1.9888;stroke-linecap:round;stroke-linejoin:round"

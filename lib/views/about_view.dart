@@ -81,7 +81,7 @@ class AboutView extends StatelessWidget {
                   ],
                 ),
 
-                Image.asset('img/morfosis.png', width: 150),
+                Image.asset('img/morfosis_brand.png', width: 100),
                 Text(
                   'Morfosis is a privacy-first media conversion app designed to be simple and accessible.\n\n'
                   'It works completely on-device, requires no internet connection, and contains no trackers.\n\n'
