@@ -5,15 +5,19 @@ import '../models/ui_settings.dart';
 import '../widgets/button_secondary.dart';
 import '../widgets/section_title.dart';
 
-class GPLv3Badge extends StatelessWidget {
+class Badge extends StatelessWidget {
+  final String label;
+  final IconData? icon; // optional
   final double iconSize;
   final TextStyle? textStyle;
   final Color? backgroundColor;
   final EdgeInsets padding;
   final double borderRadius;
 
-  const GPLv3Badge({
+  const Badge({
     super.key,
+    required this.label,
+    this.icon,
     this.iconSize = 22,
     this.textStyle,
     this.backgroundColor,
@@ -23,11 +27,11 @@ class GPLv3Badge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color bg = backgroundColor ?? accentColor2;
+    final Color bg = backgroundColor ?? accentColor;
     final TextStyle style =
         textStyle ??
         const TextStyle(
-          fontSize: 18,
+          fontSize: 14,
           fontWeight: FontWeight.bold,
           color: Colors.black,
         );
@@ -39,11 +43,13 @@ class GPLv3Badge extends StatelessWidget {
         borderRadius: BorderRadius.circular(borderRadius),
       ),
       child: Row(
-        spacing: 4,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.shield, size: iconSize, color: style.color),
-          Text('GPLv3', style: style),
+          if (icon != null) ...[
+            Icon(icon, size: iconSize, color: style.color),
+            const SizedBox(width: 4),
+          ],
+          Text(label, style: style),
         ],
       ),
     );
@@ -89,7 +95,14 @@ class AboutView extends StatelessWidget {
                   style: TextStyle(fontSize: 16, color: foregroundColor),
                   textAlign: TextAlign.center,
                 ),
-                GPLv3Badge(),
+                Row(
+                  spacing: 8,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Badge(label: 'License: GPLv3', icon: Icons.shield),
+                    Badge(label: 'Creator: Miguel Rivas', icon: Icons.person),
+                  ],
+                ),
               ],
             ),
           ),

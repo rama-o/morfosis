@@ -59,14 +59,17 @@
      id="layer1">
     <g
        id="g8968"
-       transform="matrix(1.1970542,0,0,1.1970542,-105.84984,-75.160699)">
+       transform="matrix(1.1970542,0,0,1.1970542,-105.84984,-75.160699)"
+       style="fill:#b38de3;fill-opacity:1">
       <g
          id="g9006"
-         transform="translate(6e-5,-2.3220316)">
+         transform="translate(6e-5,-2.3220316)"
+         style="fill:#b38de3;fill-opacity:1">
         <g
-           id="g8974">
+           id="g8974"
+           style="fill:#b38de3;fill-opacity:1">
           <ellipse
-             style="fill:#c992df;fill-opacity:1;stroke-width:5.133;stroke-linecap:round;stroke-linejoin:round"
+             style="fill:#b38de3;fill-opacity:1;stroke-width:5.133;stroke-linecap:round;stroke-linejoin:round"
              id="path8956"
              cx="-15.506674"
              cy="386.84924"
@@ -76,9 +79,10 @@
         </g>
         <g
            id="g8980"
-           transform="matrix(-1,0,0,1,845.1577,0)">
+           transform="matrix(-1,0,0,1,845.1577,0)"
+           style="fill:#b38de3;fill-opacity:1">
           <ellipse
-             style="fill:#c992df;fill-opacity:1;stroke-width:5.133;stroke-linecap:round;stroke-linejoin:round"
+             style="fill:#b38de3;fill-opacity:1;stroke-width:5.133;stroke-linecap:round;stroke-linejoin:round"
              id="ellipse8976"
              cx="-15.506674"
              cy="386.84924"
@@ -88,9 +92,10 @@
         </g>
         <g
            id="g8986"
-           transform="matrix(0.72374623,0,0,-0.72374623,116.739,760.42062)">
+           transform="matrix(0.72374623,0,0,-0.72374623,116.739,760.42062)"
+           style="fill:#b38de3;fill-opacity:1">
           <ellipse
-             style="fill:#c992df;fill-opacity:1;stroke-width:5.133;stroke-linecap:round;stroke-linejoin:round"
+             style="fill:#b38de3;fill-opacity:1;stroke-width:5.133;stroke-linecap:round;stroke-linejoin:round"
              id="ellipse8982"
              cx="-15.506674"
              cy="386.84924"
@@ -100,9 +105,10 @@
         </g>
         <g
            id="g8992"
-           transform="matrix(-0.72374623,0,0,-0.72374623,728.4187,760.42063)">
+           transform="matrix(-0.72374623,0,0,-0.72374623,728.4187,760.42063)"
+           style="fill:#b38de3;fill-opacity:1">
           <ellipse
-             style="fill:#c992df;fill-opacity:1;stroke-width:5.133;stroke-linecap:round;stroke-linejoin:round"
+             style="fill:#b38de3;fill-opacity:1;stroke-width:5.133;stroke-linecap:round;stroke-linejoin:round"
              id="ellipse8988"
              cx="-15.506674"
              cy="386.84924"
