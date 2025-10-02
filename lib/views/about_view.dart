@@ -81,9 +81,10 @@ class AboutView extends StatelessWidget {
                   ],
                 ),
 
+                Image.asset('img/morfosis.png', width: 150),
                 Text(
-                  'Morfosis is a privacy-first media conversion app designed to be simple, accessible, and fully offline.\n\n'
-                  'It works completely on-device, requires no internet connection, and contains no ads.\n\n'
+                  'Morfosis is a privacy-first media conversion app designed to be simple and accessible.\n\n'
+                  'It works completely on-device, requires no internet connection, and contains no trackers.\n\n'
                   'Powered by FFmpeg, Morfosis allows you to convert audio and video files between a wide range of formats.',
                   style: TextStyle(fontSize: 16, color: foregroundColor),
                   textAlign: TextAlign.center,
