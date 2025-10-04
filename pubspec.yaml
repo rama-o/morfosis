@@ -65,11 +65,11 @@ flutter:
     - "img/morfosis_brand.png"
 
 flutter_launcher_icons:
-  image_path: "img/morfosis.png"
+  image_path: "img/morfosis_brand.png"
   android: true
   ios: true
-  adaptive_icon_background: "#352939"
-  adaptive_icon_foreground: "img/morfosis.png"
+  adaptive_icon_background: "#F0B2B1"
+  adaptive_icon_foreground: "img/morfosis_brand.png"
 
   # To add assets to your application, add an assets section, like this:
   # assets:

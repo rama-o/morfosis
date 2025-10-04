@@ -87,19 +87,24 @@ class AboutView extends StatelessWidget {
                   ],
                 ),
 
-                Image.asset('img/morfosis_brand.png', width: 100),
+                Image.asset('img/morfosis_brand.png', height: 120),
                 Text(
                   'Morfosis is a privacy-first media conversion app designed to be simple and accessible.\n\n'
-                  'It works completely on-device, requires no internet connection, and contains no trackers.\n\n'
                   'Powered by FFmpeg, Morfosis allows you to convert audio and video files between a wide range of formats.',
                   style: TextStyle(fontSize: 16, color: foregroundColor),
                   textAlign: TextAlign.center,
                 ),
-                Row(
+                Wrap(
                   spacing: 8,
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  runSpacing: 8,
+                  alignment: WrapAlignment.center,
                   children: [
+                    
+                    Badge(label: 'Ads: No', icon: Icons.ads_click),
+                    Badge(label: 'Trackers: No', icon: Icons.location_on),
+                    Badge(label: 'Works Offline: Yes', icon: Icons.wifi),
                     Badge(label: 'License: GPLv3', icon: Icons.shield),
+                    Badge(label: 'Website: rama-o.github.io', icon: Icons.monitor),
                     Badge(label: 'Creator: Miguel Rivas', icon: Icons.person),
                   ],
                 ),

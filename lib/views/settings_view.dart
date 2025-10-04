@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:morfosis/models/format_option.dart';
 import '../theme.dart';
 import '../state/notifier.dart';
 import '../models/ui_settings.dart';
 import '../utils/codec_mappings.dart';
 import '../widgets/radio_option.dart';
+import '../widgets/checkbox.dart';
 import '../widgets/button_secondary.dart';
 import '../widgets/section_title.dart';
 import '../widgets/prompt_output.dart';
@@ -57,6 +59,50 @@ class SettingsView extends StatelessWidget {
 
                     return const SizedBox(height: 16);
                   },
+                ),
+
+                Text(
+                  'Output Name',
+                  style: TextStyle(color: foregroundColor, fontSize: 18),
+                ),
+
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: bgColor2,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    spacing: 16,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomTextbox(
+                        label: 'Prefix',
+                        ctrl: prefixController,
+                        onChanged: (value) {
+                          settingsNotifier.value = settingsNotifier.value
+                              .copyWith(outputPrefix: value);
+                        },
+                      ),
+                      CustomTextbox(
+                        label: 'Suffix',
+                        ctrl: suffixController,
+                        onChanged: (value) {
+                          settingsNotifier.value = settingsNotifier.value
+                              .copyWith(outputSuffix: value);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+
+                CustomCheckboxOption(
+                  option: FormatOption(
+                    label: 'Overwrite Files',
+                    description: 'Replace existing files with the new ones',
+                  ),
+                  selector: (s) => s.overwrite,
+                  updater: (s, val) => s.copyWith(overwrite: val),
                 ),
 
                 Text(
@@ -149,41 +195,6 @@ class SettingsView extends StatelessWidget {
                         }).toList(),
                       );
                     },
-                  ),
-                ),
-
-                Text(
-                  'Output Name',
-                  style: TextStyle(color: foregroundColor, fontSize: 18),
-                ),
-
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: bgColor2,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    spacing: 16,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomTextbox(
-                        label: 'Prefix',
-                        ctrl: prefixController,
-                        onChanged: (value) {
-                          settingsNotifier.value = settingsNotifier.value
-                              .copyWith(outputPrefix: value);
-                        },
-                      ),
-                      CustomTextbox(
-                        label: 'Suffix',
-                        ctrl: suffixController,
-                        onChanged: (value) {
-                          settingsNotifier.value = settingsNotifier.value
-                              .copyWith(outputSuffix: value);
-                        },
-                      ),
-                    ],
                   ),
                 ),
               ],

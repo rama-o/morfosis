@@ -18,7 +18,9 @@ String buildComando() {
   );
 
   return [
-    'ffmpeg -i <FILE_PATH>',
+    'ffmpeg',
+    settingsNotifier.value.overwrite ? '-i -y' : '-i',
+    '<FILE_PATH>',
     videoCodec,
     audioCodec,
     '"${output}"',

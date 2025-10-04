@@ -160,7 +160,8 @@ Future<void> _convertSingleFile(FileItem fileItem) async {
       : [];
 
   final commandList = [
-    '-y -i "$input"',
+    settingsNotifier.value.overwrite ? '-i -y' : '-i',
+    '"$input"',
     ...videoCodecOption,
     ...audioCodecOption,
     '"$output"',

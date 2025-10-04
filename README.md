@@ -1,5 +1,7 @@
 todo
 
+- use android notifications instead
+- extend the notifications from only errors to errors and sucess messages
 - confirmation message for deleting and clearing the queue
 - add tests
 - message for begin processing
@@ -15,6 +17,7 @@ todo
 
 -----------------------------------------------------------
 
+- add overwrite check
 - converting files in order
 - show omitted error
 - add spinner animation (an oscialting line) for when the file is beign process
@@ -33,7 +36,7 @@ todo
 
 
 
-
+dart run flutter_launcher_icons && flutter run
 
 
 
