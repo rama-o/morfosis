@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import '../widgets/empty_list.dart';
 import '../widgets/list_item.dart';
@@ -98,7 +97,7 @@ class QueueView extends StatelessWidget {
                     final fileItem = fileItems[index];
                     return ListItem(
                       id: index,
-                      file: fileItem.file,
+                      path: fileItem.path,
                       progress: fileItem.progress,
                     );
                   },

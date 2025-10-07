@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import '../models/ui_settings.dart';
 import '../models/file_item.dart';

@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:async';
 import 'package:file_picker/file_picker.dart';
 import '../state/notifier.dart';
@@ -10,22 +9,30 @@ import './notifications.dart';
 import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter_new/return_code.dart';
 
-void addFile(File file) {
-  final newItem = FileItem(file: file);
+void addFile(String path) {
+  final newItem = FileItem(path: path);
   final updatedFiles = [...filesNotifier.value, newItem];
-  final uniqueFiles = {
-    for (var f in updatedFiles) f.file.path: f,
-  }.values.toList();
-  // uniqueFiles
-  // .sort(
-  //   (a, b) => p.basename(a.file.path).compareTo(p.basename(b.file.path)),
-  // );
+  final uniqueFiles = {for (var f in updatedFiles) f.path: f}.values.toList();
   filesNotifier.value = uniqueFiles;
 }
 
-void removeFile(File file) {
+void removeFile(String path) {
   filesNotifier.value = filesNotifier.value
-      .where((f) => f.file.path != file.path)
+      .where((f) => f.path != path)
+      .toList();
+}
+
+void updateProgress(String path, int progress) {
+  filesNotifier.value = filesNotifier.value
+      .map(
+        (item) => item.path == path ? item.copyWith(progress: progress) : item,
+      )
+      .toList();
+}
+
+void markFileDone(String path) {
+  filesNotifier.value = filesNotifier.value
+      .map((item) => item.path == path ? item.copyWith(progress: 100) : item)
       .toList();
 }
 
@@ -33,32 +40,8 @@ void clearQueue() {
   filesNotifier.value = [];
 }
 
-void updateProgress(String filePath, int progress) {
-  final updatedFiles = filesNotifier.value
-      .map(
-        (fileItem) => fileItem.file.path == filePath
-            ? fileItem.copyWith(progress: progress)
-            : fileItem,
-      )
-      .toList();
-
-  filesNotifier.value = [...updatedFiles];
-}
-
-void markFileDone(String filePath) {
-  final updatedFiles = filesNotifier.value
-      .map(
-        (fileItem) => fileItem.file.path == filePath
-            ? fileItem.copyWith(progress: 100)
-            : fileItem,
-      )
-      .toList();
-
-  filesNotifier.value = [...updatedFiles];
-}
-
 Future<void> pickAudioOrVideo() async {
-  FilePickerResult? result = await FilePicker.platform.pickFiles(
+  final result = await FilePicker.platform.pickFiles(
     type: FileType.custom,
     allowMultiple: true,
     allowedExtensions: [
@@ -103,33 +86,42 @@ Future<void> pickAudioOrVideo() async {
   );
 
   if (result != null) {
-    for (var platformFile in result.files) {
+    for (final platformFile in result.files) {
       if (platformFile.path != null) {
-        addFile(File(platformFile.path!));
+        addFile(platformFile.path!);
       }
     }
   }
 }
 
-Future<int> getMediaDuration(String filePath) async {
-  final session = await FFmpegKit.execute('-i "$filePath"');
+Future<int> getMediaDuration(String path) async {
+  // Run FFmpeg just to probe the file metadata
+  final session = await FFmpegKit.execute('-i "$path"');
   final returnCode = await session.getReturnCode();
-  if (!ReturnCode.isSuccess(returnCode)) return 0;
+
+  if (!ReturnCode.isSuccess(returnCode)) {
+    print('⚠️ Failed to read duration for: $path');
+    return 0;
+  }
 
   final logs = await session.getAllLogs();
-  for (var log in logs) {
+  for (final log in logs) {
     final message = log.getMessage();
+
     final match = RegExp(
-      r'Duration: (\d+):(\d+):(\d+\.\d+)',
+      r'Duration:\s(\d+):(\d+):(\d+\.\d+)',
     ).firstMatch(message);
     if (match != null) {
       final hours = int.parse(match.group(1)!);
       final minutes = int.parse(match.group(2)!);
       final seconds = double.parse(match.group(3)!);
-      return ((hours * 3600 + minutes * 60 + seconds) * 1000).toInt();
+
+      final totalMs = ((hours * 3600 + minutes * 60 + seconds) * 1000).toInt();
+      return totalMs;
     }
   }
 
+  print('⚠️ No duration found in FFmpeg output for: $path');
   return 0;
 }
 
@@ -154,7 +146,7 @@ Future<void> convertFiles() async {
 }
 
 Future<void> _convertSingleFile(FileItem fileItem) async {
-  final input = fileItem.file.path;
+  final input = fileItem.path;
   final name = p.basenameWithoutExtension(input);
 
   final output = p.join(
@@ -182,7 +174,7 @@ Future<void> _convertSingleFile(FileItem fileItem) async {
 
   final command = commandList.join(' ');
 
-  updateProgress(fileItem.file.path, 0);
+  updateProgress(fileItem.path, 0);
 
   final duration = await getMediaDuration(input);
 
@@ -194,7 +186,7 @@ Future<void> _convertSingleFile(FileItem fileItem) async {
       final returnCode = await session.getReturnCode();
 
       if (ReturnCode.isSuccess(returnCode)) {
-        markFileDone(fileItem.file.path);
+        markFileDone(fileItem.path);
         print('✅ Conversion finished: $output');
       } else {
         addError('❌ Conversion failed for $input (code $returnCode)');
@@ -209,7 +201,7 @@ Future<void> _convertSingleFile(FileItem fileItem) async {
       if (duration > 0) {
         final time = statistics.getTime();
         final progress = ((time / duration) * 100).clamp(0, 100).toInt();
-        updateProgress(fileItem.file.path, progress);
+        updateProgress(fileItem.path, progress);
       }
     },
   );

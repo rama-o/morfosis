@@ -1,17 +1,12 @@
-import 'dart:io';
-
 class FileItem {
-  File file;
-  int progress;
+  final String path;
+  final int progress;
 
-  FileItem({required this.file, this.progress = 0});
+  FileItem({required this.path, this.progress = 0});
 
-  FileItem copyWith({
-    File? file,
-    int? progress,
-  }) {
+  FileItem copyWith({String? path, int? progress}) {
     return FileItem(
-      file: file ?? this.file,
+      path: path ?? this.path,
       progress: progress ?? this.progress,
     );
   }
