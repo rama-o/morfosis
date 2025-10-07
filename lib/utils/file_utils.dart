@@ -5,6 +5,7 @@ import '../state/notifier.dart';
 import '../models/file_item.dart';
 import 'package:morfosis/utils/errors_utils.dart';
 import 'package:path/path.dart' as p;
+import './notifications.dart';
 
 import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter_new/return_code.dart';
@@ -135,9 +136,21 @@ Future<int> getMediaDuration(String filePath) async {
 Future<void> convertFiles() async {
   clearErrors();
 
+  // Notify user that conversion started
+  await showNotification(
+    'Conversion Started',
+    'Your files are being converted. You’ll receive a notification once the batch is complete.',
+  );
+
   for (final fileItem in filesNotifier.value) {
     await _convertSingleFile(fileItem);
   }
+
+  // Notify user that conversion finished
+  await showNotification(
+    'Conversion Complete',
+    'All files have been successfully converted. You can find them in your Documents folder.',
+  );
 }
 
 Future<void> _convertSingleFile(FileItem fileItem) async {
@@ -160,7 +173,7 @@ Future<void> _convertSingleFile(FileItem fileItem) async {
       : [];
 
   final commandList = [
-    settingsNotifier.value.overwrite ? '-i -y' : '-i',
+    settingsNotifier.value.overwrite ? '-y -i' : '-i',
     '"$input"',
     ...videoCodecOption,
     ...audioCodecOption,

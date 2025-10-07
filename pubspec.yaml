@@ -30,9 +30,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
   file_picker: ^8.1.2
   ffmpeg_kit_flutter_new: ^3.2.0
+  permission_handler: ^11.3.0
+
+  flutter_local_notifications:
+    path: ./packs/flutter_local_notifications_local/flutter_local_notifications
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

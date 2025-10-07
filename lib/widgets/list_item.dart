@@ -5,7 +5,6 @@ import 'button_secondary.dart';
 import '../utils/file_utils.dart';
 import 'package:path/path.dart' as p;
 import 'dart:io';
-// import '../models/file_item.dart';
 
 class ListItem extends StatelessWidget {
   final int id;
@@ -34,6 +33,7 @@ class ListItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            spacing: 8,
             children: [
               Expanded(
                 child: Column(
@@ -47,18 +47,14 @@ class ListItem extends StatelessWidget {
                       '$inputFormat → ${settingsNotifier.value.outputFormat}',
                       style: TextStyle(color: foregroundColor),
                     ),
-                    const SizedBox(height: 8),
-                    LinearProgressIndicator(
-                      value: progress / 100,
-                      backgroundColor: Colors.grey.shade700,
-                      valueColor: AlwaysStoppedAnimation<Color>(accentColor2),
-                      minHeight: 6,
-                      semanticsLabel: '${progress}%',
-                    ),
                   ],
                 ),
               ),
-              const SizedBox(width: 16),
+
+              progress == 100
+                  ? Icon(Icons.check, color: succesColor, size: 24)
+                  : Icon(Icons.schedule, color: Colors.grey, size: 24),
+
               CustomBtnSecondary(
                 glyph: const Icon(Icons.delete),
                 tooltip: 'Delete Item',

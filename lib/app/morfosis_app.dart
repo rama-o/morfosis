@@ -13,6 +13,8 @@ import '../views/about_view.dart';
 import '../models/file_item.dart';
 import '../utils/file_utils.dart';
 
+import '../utils/notifications.dart';
+
 class MorfosisApp extends StatefulWidget {
   const MorfosisApp({super.key});
 
