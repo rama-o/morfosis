@@ -101,6 +101,7 @@ class AboutView extends StatelessWidget {
                   children: [
                     
                     Badge(label: 'Ads: No', icon: Icons.ads_click),
+                    Badge(label: 'Runs in Background: No', icon: Icons.block),
                     Badge(label: 'Trackers: No', icon: Icons.location_on),
                     Badge(label: 'Works Offline: Yes', icon: Icons.wifi),
                     Badge(label: 'License: GPLv3', icon: Icons.shield),

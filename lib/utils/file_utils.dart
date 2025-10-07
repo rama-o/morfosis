@@ -139,7 +139,7 @@ Future<void> convertFiles() async {
   // Notify user that conversion started
   await showNotification(
     'Conversion Started',
-    'Your files are being converted. You’ll receive a notification once the batch is complete.',
+    'Please keep this app open and do not switch or close it.',
   );
 
   for (final fileItem in filesNotifier.value) {
