@@ -50,17 +50,6 @@ class SettingsView extends StatelessWidget {
                   ],
                 ),
 
-                ValueListenableBuilder<List<String>>(
-                  valueListenable: errorsNotifier,
-                  builder: (context, errors, _) {
-                    if (errorsNotifier.value.isNotEmpty) {
-                      return PromptOutput(output: errorsNotifier.value);
-                    }
-
-                    return const SizedBox(height: 16);
-                  },
-                ),
-
                 Text(
                   'Output Name',
                   style: TextStyle(color: foregroundColor, fontSize: 18),

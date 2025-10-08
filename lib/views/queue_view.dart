@@ -23,6 +23,7 @@ class QueueView extends StatelessWidget {
           spacing: 16,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Header Row
             Row(
               spacing: 8,
               children: [
@@ -41,7 +42,6 @@ class QueueView extends StatelessWidget {
                   accent: accentColor,
                   action: clearQueue,
                 ),
-
                 PopupMenuButton<int>(
                   color: bgColor2,
                   icon: const Icon(
@@ -73,35 +73,50 @@ class QueueView extends StatelessWidget {
               ],
             ),
 
+            // Errors Section
             ValueListenableBuilder<List<String>>(
               valueListenable: errorsNotifier,
               builder: (context, errors, _) {
-                if (errorsNotifier.value.isEmpty) {
-                  return const SizedBox(height: 0);
-                }
-
-                return PromptOutput(output: errorsNotifier.value);
+                if (errors.isEmpty) return const SizedBox.shrink();
+                return PromptOutput(output: errors);
               },
             ),
 
-            ValueListenableBuilder<List<FileItem>>(
-              valueListenable: filesNotifier,
-              builder: (context, fileItems, _) {
-                if (fileItems.isEmpty) return const EmptyList();
+            // Loading Spinner or File List
+            ValueListenableBuilder<bool>(
+              valueListenable: isLoadingFiles,
+              builder: (context, loading, _) {
+                if (loading) {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: Center(
+                      child: CircularProgressIndicator(color: accentColor2),
+                    ),
+                  );
+                }
 
-                return ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: fileItems.length,
-                  itemBuilder: (context, index) {
-                    final fileItem = fileItems[index];
-                    return ListItem(
-                      id: index,
-                      path: fileItem.path,
-                      progress: fileItem.progress,
+                // File List
+                return ValueListenableBuilder<List<FileItem>>(
+                  valueListenable: filesNotifier,
+                  builder: (context, fileItems, _) {
+                    if (fileItems.isEmpty) return const EmptyList();
+
+                    return ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: fileItems.length,
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      separatorBuilder: (_, __) => const SizedBox(height: 16),
+                      itemBuilder: (context, index) {
+                        final fileItem = fileItems[index];
+                        return ListItem(
+                          id: index,
+                          path: fileItem.path,
+                          progress: fileItem.progress,
+                        );
+                      },
                     );
                   },
-                  separatorBuilder: (_, __) => const SizedBox(height: 16),
                 );
               },
             ),

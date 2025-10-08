@@ -22,76 +22,105 @@ void removeFile(String path) {
       .toList();
 }
 
-void updateProgress(String path, int progress) {
-  filesNotifier.value = filesNotifier.value
-      .map(
-        (item) => item.path == path ? item.copyWith(progress: progress) : item,
-      )
-      .toList();
-}
-
-void markFileDone(String path) {
-  filesNotifier.value = filesNotifier.value
-      .map((item) => item.path == path ? item.copyWith(progress: 100) : item)
-      .toList();
-}
-
 void clearQueue() {
   filesNotifier.value = [];
 }
 
-Future<void> pickAudioOrVideo() async {
-  final result = await FilePicker.platform.pickFiles(
-    type: FileType.custom,
-    allowMultiple: true,
-    allowedExtensions: [
-      'mp4',
-      'avi',
-      'mov',
-      'mpeg',
-      'mpg',
-      'flv',
-      'webm',
-      'wmv',
-      'm4v',
-      'rm',
-      'rmvb',
-      'vob',
-      'mts',
-      'm2ts',
-      'ts',
-      'f4v',
-      'divx',
-      '3gp',
-      '3g2',
-
-      'wma',
-      'mkv',
-      'mp3',
-      'm4a',
-      'wav',
-      'flac',
-      'ogg',
-      'aac',
-      'opus',
-      'amr',
-      'aiff',
-      'aif',
-      'au',
-      'ra',
-      'mid',
-      'midi',
-      'caf',
-    ],
-  );
-
-  if (result != null) {
-    for (final platformFile in result.files) {
-      if (platformFile.path != null) {
-        addFile(platformFile.path!);
-      }
+void updateProgress(String path, int progress) {
+  for (final file in filesNotifier.value) {
+    if (file.path == path) {
+      file.updateProgress(progress);
+      break;
     }
   }
+}
+
+void markFileDone(String path) {
+  for (final file in filesNotifier.value) {
+    if (file.path == path) {
+      file.markDone();
+      break;
+    }
+  }
+}
+
+Future<void> pickAudioOrVideo() async {
+  isLoadingFiles.value = true;
+
+  try {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowMultiple: true,
+      allowedExtensions: [
+        'mp4',
+        'avi',
+        'mov',
+        'mpeg',
+        'mpg',
+        'flv',
+        'webm',
+        'wmv',
+        'm4v',
+        'rm',
+        'rmvb',
+        'vob',
+        'mts',
+        'm2ts',
+        'ts',
+        'f4v',
+        'divx',
+        '3gp',
+        '3g2',
+        'wma',
+        'mkv',
+        'mp3',
+        'm4a',
+        'wav',
+        'flac',
+        'ogg',
+        'aac',
+        'opus',
+        'amr',
+        'aiff',
+        'aif',
+        'au',
+        'ra',
+        'mid',
+        'midi',
+        'caf',
+      ],
+    );
+
+    if (result != null) {
+      final paths = result.files
+          .where((pf) => pf.path != null)
+          .map((pf) => pf.path!)
+          .toList();
+      addFiles(paths); // your existing function
+    }
+  } finally {
+    isLoadingFiles.value = false; // hide spinner
+  }
+}
+
+Future<void> addFiles(List<String> paths) async {
+  if (paths.isEmpty) return;
+
+  // Fetch current files
+  final currentFiles = filesNotifier.value;
+
+  // Use a map to ensure unique file paths
+  final Map<String, FileItem> fileMap = {for (var f in currentFiles) f.path: f};
+
+  // Add only new paths
+  for (final path in paths) {
+    if (!fileMap.containsKey(path)) {
+      fileMap[path] = FileItem(path: path);
+    }
+  }
+
+  // Update notifier once at the end (faster than multiple updates)
+  filesNotifier.value = fileMap.values.toList();
 }
 
 Future<int> getMediaDuration(String path) async {

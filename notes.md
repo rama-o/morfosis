@@ -1,5 +1,7 @@
 todo
 
+- testing loading files time
+
 - add tests
 - confirmation message for deleting and clearing the queue
 
