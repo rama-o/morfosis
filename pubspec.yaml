@@ -33,7 +33,7 @@ dependencies:
   file_picker: ^8.1.2
   ffmpeg_kit_flutter_new: ^3.2.0
   permission_handler: ^11.3.0
-
+  url_launcher: ^6.2.1
   flutter_local_notifications:
     path: ./packs/flutter_local_notifications_local/flutter_local_notifications
 

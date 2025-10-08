@@ -1,7 +1,7 @@
 todo
 
-- testing loading files time
 
+- add link for the websites
 - add tests
 - confirmation message for deleting and clearing the queue
 
@@ -15,6 +15,7 @@ todo
 
 -----------------------------------------------------------
 
+- testing loading files time
 - message for begin processing
 - use android notifications instead
 - change progress bar for waiting and check icon to indicate the state of the process
