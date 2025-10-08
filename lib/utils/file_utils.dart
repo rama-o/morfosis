@@ -27,21 +27,27 @@ void clearQueue() {
 }
 
 void updateProgress(String path, int progress) {
-  for (final file in filesNotifier.value) {
-    if (file.path == path) {
-      file.updateProgress(progress);
+  final items = filesNotifier.value;
+  for (final fileItem in items) {
+    if (fileItem.path == path) {
+      fileItem.updateProgress(progress);
       break;
     }
   }
+
+  filesNotifier.notifyListeners();
 }
 
 void markFileDone(String path) {
-  for (final file in filesNotifier.value) {
-    if (file.path == path) {
-      file.markDone();
+  final items = filesNotifier.value;
+  for (final fileItem in items) {
+    if (fileItem.path == path) {
+      fileItem.markDone();
       break;
     }
   }
+
+  filesNotifier.notifyListeners();
 }
 
 Future<void> pickAudioOrVideo() async {
@@ -96,35 +102,30 @@ Future<void> pickAudioOrVideo() async {
           .where((pf) => pf.path != null)
           .map((pf) => pf.path!)
           .toList();
-      addFiles(paths); // your existing function
+      addFiles(paths);
     }
   } finally {
-    isLoadingFiles.value = false; // hide spinner
+    isLoadingFiles.value = false;
   }
 }
 
 Future<void> addFiles(List<String> paths) async {
   if (paths.isEmpty) return;
 
-  // Fetch current files
   final currentFiles = filesNotifier.value;
 
-  // Use a map to ensure unique file paths
   final Map<String, FileItem> fileMap = {for (var f in currentFiles) f.path: f};
 
-  // Add only new paths
   for (final path in paths) {
     if (!fileMap.containsKey(path)) {
       fileMap[path] = FileItem(path: path);
     }
   }
 
-  // Update notifier once at the end (faster than multiple updates)
   filesNotifier.value = fileMap.values.toList();
 }
 
 Future<int> getMediaDuration(String path) async {
-  // Run FFmpeg just to probe the file metadata
   final session = await FFmpegKit.execute('-i "$path"');
   final returnCode = await session.getReturnCode();
 
@@ -157,7 +158,6 @@ Future<int> getMediaDuration(String path) async {
 Future<void> convertFiles() async {
   clearErrors();
 
-  // Notify user that conversion started
   await showNotification(
     'Conversion Started',
     'Please keep this app open and do not switch or close it.',
@@ -167,7 +167,6 @@ Future<void> convertFiles() async {
     await _convertSingleFile(fileItem);
   }
 
-  // Notify user that conversion finished
   await showNotification(
     'Conversion Complete',
     'All files have been successfully converted. You can find them in your Documents folder.',
@@ -204,6 +203,9 @@ Future<void> _convertSingleFile(FileItem fileItem) async {
   final command = commandList.join(' ');
 
   updateProgress(fileItem.path, 0);
+  print(
+    '1-------------------------------------------------------------------------------------------- ${fileItem.path}',
+  );
 
   final duration = await getMediaDuration(input);
 
@@ -230,6 +232,9 @@ Future<void> _convertSingleFile(FileItem fileItem) async {
       if (duration > 0) {
         final time = statistics.getTime();
         final progress = ((time / duration) * 100).clamp(0, 100).toInt();
+        print(
+          '2-------------------------------------------------------------------------------------------- ${progress}',
+        );
         updateProgress(fileItem.path, progress);
       }
     },

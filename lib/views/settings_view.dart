@@ -8,7 +8,6 @@ import '../widgets/radio_option.dart';
 import '../widgets/checkbox.dart';
 import '../widgets/button_secondary.dart';
 import '../widgets/section_title.dart';
-import '../widgets/prompt_output.dart';
 import '../widgets/textbox.dart';
 
 final suffixController = TextEditingController(

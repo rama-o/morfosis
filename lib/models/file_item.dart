@@ -4,10 +4,8 @@ class FileItem {
   final String path;
   final ValueNotifier<int> progressNotifier;
 
-  FileItem({
-    required this.path,
-    int progress = 0,
-  }) : progressNotifier = ValueNotifier(progress);
+  FileItem({required this.path, int progress = 0})
+    : progressNotifier = ValueNotifier(progress);
 
   int get progress => progressNotifier.value;
 

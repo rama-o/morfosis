@@ -23,7 +23,6 @@ class QueueView extends StatelessWidget {
           spacing: 16,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header Row
             Row(
               spacing: 8,
               children: [
@@ -73,7 +72,6 @@ class QueueView extends StatelessWidget {
               ],
             ),
 
-            // Errors Section
             ValueListenableBuilder<List<String>>(
               valueListenable: errorsNotifier,
               builder: (context, errors, _) {
@@ -82,7 +80,6 @@ class QueueView extends StatelessWidget {
               },
             ),
 
-            // Loading Spinner or File List
             ValueListenableBuilder<bool>(
               valueListenable: isLoadingFiles,
               builder: (context, loading, _) {
@@ -95,7 +92,6 @@ class QueueView extends StatelessWidget {
                   );
                 }
 
-                // File List
                 return ValueListenableBuilder<List<FileItem>>(
                   valueListenable: filesNotifier,
                   builder: (context, fileItems, _) {
