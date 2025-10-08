@@ -21,7 +21,7 @@ class AboutView extends StatelessWidget {
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
-              spacing: 16,
+              spacing: 48,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Row(
@@ -38,15 +38,15 @@ class AboutView extends StatelessWidget {
                   ],
                 ),
 
-                Image.asset('img/morfosis_brand.png'),
-                
                 Column(
-                  spacing: 8,
-                  // runSpacing: 8,
-                  // alignment: WrapAlignment.center,
+                  spacing: 16,
                   children: [
+                    Image.asset('img/morfosis_brand.png', height: 120),
                     CustomBadge(label: 'Ads: No', icon: Icons.ads_click),
-                    CustomBadge(label: 'Runs in Background: No', icon: Icons.block),
+                    CustomBadge(
+                      label: 'Runs in Background: No',
+                      icon: Icons.block,
+                    ),
                     CustomBadge(label: 'Trackers: No', icon: Icons.location_on),
                     CustomBadge(label: 'Works Offline: Yes', icon: Icons.wifi),
                     CustomBadge(label: 'License: GPLv3', icon: Icons.shield),
