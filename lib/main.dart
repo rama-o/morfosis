@@ -11,6 +11,7 @@ void main() async {
 
   // Request notification permission (Android 13+)
   await requestNotificationPermission();
+  await requestStoragePermission();
 
   runApp(MorfosisApp());
 }
@@ -19,7 +20,18 @@ Future<void> requestNotificationPermission() async {
   final status = await Permission.notification.status;
 
   if (!status.isGranted) {
-    // Ask the user for permission
     await Permission.notification.request();
+  }
+}
+
+Future<void> requestStoragePermission() async {
+  if (await Permission.manageExternalStorage.isGranted) {
+    return;
+  }
+
+  var status = await Permission.manageExternalStorage.request();
+
+  if (!status.isGranted) {
+    await openAppSettings();
   }
 }

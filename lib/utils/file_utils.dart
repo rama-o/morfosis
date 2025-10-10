@@ -203,9 +203,6 @@ Future<void> _convertSingleFile(FileItem fileItem) async {
   final command = commandList.join(' ');
 
   updateProgress(fileItem.path, 0);
-  print(
-    '1-------------------------------------------------------------------------------------------- ${fileItem.path}',
-  );
 
   final duration = await getMediaDuration(input);
 
@@ -232,9 +229,6 @@ Future<void> _convertSingleFile(FileItem fileItem) async {
       if (duration > 0) {
         final time = statistics.getTime();
         final progress = ((time / duration) * 100).clamp(0, 100).toInt();
-        print(
-          '2-------------------------------------------------------------------------------------------- ${progress}',
-        );
         updateProgress(fileItem.path, progress);
       }
     },

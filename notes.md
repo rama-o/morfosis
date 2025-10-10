@@ -1,20 +1,20 @@
 todo
 
+- build app
+- add tests / if the test pass, it can be added to fdroid
 
-- add link for the websites
-- add tests
 - confirmation message for deleting and clearing the queue
-
 - work in the branding
 - github organization
 - video demo
-
 - home page
 - design page
 - license page
 
 -----------------------------------------------------------
 
+- fix notification pack / use the github one
+- add link for the websites
 - testing loading files time
 - message for begin processing
 - use android notifications instead
