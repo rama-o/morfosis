@@ -2,7 +2,7 @@
 -keep class io.flutter.app.** { *; }
 -keep class io.flutter.plugin.** { *; }
 -keep class io.flutter.plugins.** { *; }
--keep class com.yourcompany.** { *; }
+-keep class com.morfosis.** { *; }
 
 # FFmpegKit
 -keep class com.antonkarpenko.** { *; }
