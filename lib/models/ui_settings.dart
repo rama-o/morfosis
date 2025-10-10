@@ -10,7 +10,7 @@ class UiSettings {
     this.outputFormat = 'mp3',
     this.videoCodec = 'Keep Original',
     this.audioCodec = 'Keep Original',
-    this.outputPrefix = 'mor_',
+    this.outputPrefix = '',
     this.outputSuffix = '',
     this.overwrite = true,
   });

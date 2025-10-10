@@ -166,7 +166,7 @@ Future<void> convertFiles() async {
 
   await showNotification(
     'Conversion Complete',
-    'All files have been successfully converted. You can find them in: "${dir.path}"',
+    'All files have been successfully converted. You can find them in Download/Morfosis/',
   );
 }
 

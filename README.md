@@ -1,3 +1,5 @@
+[![Morfosis](https://rama-o.github.io/img/preview-morfosis.webp)](https://morfosis-o.github.io)
+
 # 🌀 Morfosis
 
 **Morfosis** is a **privacy-first media conversion app** designed to be simple, fast, and accessible.
@@ -6,7 +8,7 @@ Powered by **FFmpeg**, Morfosis lets you convert **audio and video files** betwe
 
 ---
 
-## 🚀 Run or Reset the App
+## 🚀 Run or Restart the App
 
 ```bash
 flutter clean
