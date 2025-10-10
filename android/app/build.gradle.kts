@@ -16,12 +16,15 @@ plugins {
 android {
     namespace = "com.example.morfosis"
     compileSdk = flutter.compileSdkVersion
+    //compileSdk = 33
     ndkVersion = flutter.ndkVersion
 
     defaultConfig {
         applicationId = "com.example.morfosis"
         minSdk = flutter.minSdkVersion
+        //minSdk = 21
         targetSdk = flutter.targetSdkVersion
+        //targetSdk = 33
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }

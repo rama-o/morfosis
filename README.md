@@ -44,6 +44,12 @@ keytool -genkeypair -v \
 flutter build apk --release
 ```
 
+### 3. Test release
+
+```bash
+adb uninstall com.example.morfosis && flutter run --release -v
+```
+
 ---
 
 ## 💡 Notes

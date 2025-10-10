@@ -5,16 +5,10 @@ import '../models/file_item.dart';
 import 'package:morfosis/utils/errors_utils.dart';
 import 'package:path/path.dart' as p;
 import './notifications.dart';
-
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter_new/return_code.dart';
-
-void addFile(String path) {
-  final newItem = FileItem(path: path);
-  final updatedFiles = [...filesNotifier.value, newItem];
-  final uniqueFiles = {for (var f in updatedFiles) f.path: f}.values.toList();
-  filesNotifier.value = uniqueFiles;
-}
 
 void removeFile(String path) {
   filesNotifier.value = filesNotifier.value
@@ -156,6 +150,9 @@ Future<int> getMediaDuration(String path) async {
 }
 
 Future<void> convertFiles() async {
+  final dir = await getExternalStorageDirectory();
+  if (dir == null) throw Exception('Cannot access storage directory');
+
   clearErrors();
 
   await showNotification(
@@ -169,22 +166,25 @@ Future<void> convertFiles() async {
 
   await showNotification(
     'Conversion Complete',
-    'All files have been successfully converted. You can find them in your Documents folder.',
+    'All files have been successfully converted. You can find them in: "${dir.path}"',
   );
 }
 
 Future<void> _convertSingleFile(FileItem fileItem) async {
+  // 1️⃣ User-visible folder in Downloads
+  final downloadsDir = Directory('/storage/emulated/0/Download/Morfosis');
+  if (!downloadsDir.existsSync()) {
+    downloadsDir.createSync(recursive: true);
+  }
+
   final input = fileItem.path;
   final name = p.basenameWithoutExtension(input);
 
-  final output = p.join(
-    'storage',
-    'emulated',
-    '0',
-    'Documents',
-    '${settingsNotifier.value.outputPrefix}$name${settingsNotifier.value.outputSuffix}.${settingsNotifier.value.outputFormat}',
-  );
+  final outputFileName =
+      '${settingsNotifier.value.outputPrefix}$name${settingsNotifier.value.outputSuffix}.${settingsNotifier.value.outputFormat}';
+  final output = p.join(downloadsDir.path, outputFileName);
 
+  // 2️⃣ Build codec options
   final videoCodecOption = settingsNotifier.value.videoCodec != 'Keep Original'
       ? ['-c:v', settingsNotifier.value.videoCodec]
       : [];
@@ -192,8 +192,10 @@ Future<void> _convertSingleFile(FileItem fileItem) async {
       ? ['-c:a', settingsNotifier.value.audioCodec]
       : [];
 
+  // 3️⃣ Build FFmpeg command as a single string
   final commandList = [
-    settingsNotifier.value.overwrite ? '-y -i' : '-i',
+    if (settingsNotifier.value.overwrite) '-y',
+    '-i',
     '"$input"',
     ...videoCodecOption,
     ...audioCodecOption,
@@ -203,11 +205,10 @@ Future<void> _convertSingleFile(FileItem fileItem) async {
   final command = commandList.join(' ');
 
   updateProgress(fileItem.path, 0);
-
   final duration = await getMediaDuration(input);
-
   final completer = Completer<void>();
 
+  // 4️⃣ Execute FFmpegKit asynchronously
   FFmpegKit.executeAsync(
     command,
     (session) async {
@@ -222,13 +223,12 @@ Future<void> _convertSingleFile(FileItem fileItem) async {
 
       completer.complete();
     },
-    (log) {
-      print(log.getMessage());
-    },
+    (log) => print(log.getMessage()),
     (statistics) {
       if (duration > 0) {
-        final time = statistics.getTime();
-        final progress = ((time / duration) * 100).clamp(0, 100).toInt();
+        final progress = ((statistics.getTime() / duration) * 100)
+            .clamp(0, 100)
+            .toInt();
         updateProgress(fileItem.path, progress);
       }
     },

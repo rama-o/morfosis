@@ -1,7 +1,12 @@
 import '../state/notifier.dart';
 import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+import 'dart:async';
+import 'dart:io';
 
-String buildComando() {
+Future<String> buildComando() async {
+  final downloadsDir = Directory('/storage/emulated/0/Download/Morfosis');
+
   final videoCodec = settingsNotifier.value.videoCodec == 'Keep Original'
       ? ''
       : '-c:v ${settingsNotifier.value.videoCodec}';
@@ -10,10 +15,7 @@ String buildComando() {
       : '-c:a ${settingsNotifier.value.audioCodec}';
 
   final output = p.join(
-    'storage',
-    'emulated',
-    '0',
-    'Documents',
+    downloadsDir.path,
     '${settingsNotifier.value.outputPrefix}<FILE_NAME>${settingsNotifier.value.outputSuffix}.${settingsNotifier.value.outputFormat}',
   );
 

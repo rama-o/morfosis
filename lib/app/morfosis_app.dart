@@ -14,6 +14,7 @@ import '../models/file_item.dart';
 import '../utils/file_utils.dart';
 
 import '../utils/notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class MorfosisApp extends StatefulWidget {
   const MorfosisApp({super.key});
@@ -26,13 +27,68 @@ class _MorfosisAppState extends State<MorfosisApp> {
   final PageController _pageController = PageController();
   int currentViewIndex = 0;
 
+  bool _initialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeApp();
+  }
+
   void navigateTo(int index) {
     setState(() => currentViewIndex = index);
     _pageController.jumpToPage(index);
   }
 
+  Future<void> _initializeApp() async {
+    try {
+      // Initialize notifications
+      await initializeNotifications();
+
+      // Request permissions safely
+      await _requestNotificationPermission();
+      // await _requestStoragePermission();
+    } catch (e) {
+      print('Initialization error: $e');
+    } finally {
+      setState(() => _initialized = true);
+    }
+  }
+
+  Future<void> _requestNotificationPermission() async {
+    try {
+      final status = await Permission.notification.status;
+      if (!status.isGranted) {
+        await Permission.notification.request();
+      }
+    } catch (e) {
+      print('Notification permission error: $e');
+    }
+  }
+
+  // Future<void> _requestStoragePermission() async {
+  //   try {
+  //     if (!await Permission.manageExternalStorage.isGranted) {
+  //       var status = await Permission.manageExternalStorage.request();
+  //       if (!status.isGranted) {
+  //         await openAppSettings();
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print('Storage permission error: $e');
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
+    if (!_initialized) {
+      // Show loading while initializing
+      return MaterialApp(
+        home: Scaffold(body: Center(child: CircularProgressIndicator())),
+      );
+    }
+
+    // Main app after initialization
     return MaterialApp(
       darkTheme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: bgColor,
@@ -63,7 +119,21 @@ class _MorfosisAppState extends State<MorfosisApp> {
                   child: ValueListenableBuilder<UiSettings>(
                     valueListenable: settingsNotifier,
                     builder: (context, settings, _) {
-                      return CodeInput(output: buildComando());
+                      return FutureBuilder<String>(
+                        future: buildComando(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            return CodeInput(
+                              output: snapshot.data!,
+                            );
+                          }
+                        },
+                      );
                     },
                   ),
                 ),
@@ -84,7 +154,6 @@ class _MorfosisAppState extends State<MorfosisApp> {
                       glyph: const Icon(Icons.swap_horiz),
                       tooltip: 'Convert Files',
                       accent: accentColor,
-
                       action: convertFiles,
                     );
                   },
