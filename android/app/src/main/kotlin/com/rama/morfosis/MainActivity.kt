@@ -1,4 +1,4 @@
-package com.example.morfosis
+package com.rama.morfosis
 
 import io.flutter.embedding.android.FlutterActivity
 

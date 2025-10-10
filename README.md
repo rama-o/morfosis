@@ -47,7 +47,7 @@ flutter build apk --release
 ### 3. Test release
 
 ```bash
-adb uninstall com.example.morfosis && flutter run --release -v
+adb uninstall com.rama.morfosis && flutter run --release -v
 ```
 
 ---
@@ -59,5 +59,5 @@ adb uninstall com.example.morfosis && flutter run --release -v
 - You can reset the app’s state (including permissions) by clearing app data or running:
 
   ```bash
-  adb shell pm clear com.example.morfosis
+  adb shell pm clear com.rama.morfosis
   ```

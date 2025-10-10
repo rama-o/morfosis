@@ -14,13 +14,13 @@ plugins {
 }
 
 android {
-    namespace = "com.example.morfosis"
+    namespace = "com.rama.morfosis"
     compileSdk = flutter.compileSdkVersion
     //compileSdk = 33
     ndkVersion = flutter.ndkVersion
 
     defaultConfig {
-        applicationId = "com.example.morfosis"
+        applicationId = "com.rama.morfosis"
         minSdk = flutter.minSdkVersion
         //minSdk = 21
         targetSdk = flutter.targetSdkVersion
