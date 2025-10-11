@@ -16,7 +16,7 @@ jobs:
       # Install Flutter
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.24.3" # or your current Flutter version
+          flutter-version: "3.35.3"
           cache: true
 
       # Set up Java (required by Gradle)
