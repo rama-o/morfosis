@@ -1,0 +1,56 @@
+name: "Build unsigned release APK on master"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout your repository
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      # Install Flutter
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.35.3"
+          cache: true
+
+      # Set up Java (required by Gradle)
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      # Get dependencies
+      - name: "Install dependencies"
+        run: flutter pub get
+
+      # Build release APK
+      - name: "Build release APK"
+        run: flutter build apk --release
+
+      # Rename APK
+      - name: "Rename APK"
+        run: |
+          META_FILE="build/app/outputs/apk/release/output-metadata.json"
+          VERSION_NAME=$(jq -r ".elements[0].versionName" "$META_FILE")
+
+          echo "Version name: $VERSION_NAME" >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          cat "$META_FILE" >> "$GITHUB_STEP_SUMMARY"
+          echo >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+          mv build/app/outputs/apk/release/*.apk "build/app/outputs/apk/release/Morfosis_v${VERSION_NAME}.apk"
+
+      # Upload the built APK
+      - name: "Upload APK"
+        uses: actions/upload-artifact@v4
+        with:
+          name: Morfosis
+          path: build/app/outputs/apk/release/*.apk
