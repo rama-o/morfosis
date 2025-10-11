@@ -11,7 +11,7 @@ jobs:
       # Checkout your repository
       - uses: actions/checkout@v4
         with:
-          ref: master
+          ref: main
 
       # Install Flutter
       - uses: subosito/flutter-action@v2
