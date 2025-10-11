@@ -13,6 +13,7 @@ import '../views/about_view.dart';
 import '../models/file_item.dart';
 import '../utils/file_utils.dart';
 
+import 'dart:io' show Platform;
 import '../utils/notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -56,6 +57,8 @@ class _MorfosisAppState extends State<MorfosisApp> {
   }
 
   Future<void> _requestNotificationPermission() async {
+    if (Platform.environment.containsKey('FLUTTER_TEST')) return;
+    
     try {
       final status = await Permission.notification.status;
       if (!status.isGranted) {
