@@ -71,7 +71,6 @@ flutter:
 flutter_launcher_icons:
   image_path: "img/morfosis_brand.png"
   android: true
-  ios: true
   adaptive_icon_background: "#F0B2B1"
   adaptive_icon_foreground: "img/morfosis_brand.png"
 
