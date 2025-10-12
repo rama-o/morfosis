@@ -39,15 +39,11 @@ Morfosis needs the following permissions:
 
 ## 🏗️ Build Instructions
 
-### 1. Generate a Signing Key
+### 1. Remove IMGs metadata
 
 ```bash
-keytool -genkeypair -v \
-  -keystore ~/morfosis.jks \
-  -alias morfosis \
-  -keyalg RSA \
-  -keysize 2048 \
-  -validity 10000
+find . -name '*.jpg' -o -name '*.jpeg' -o -name '*.png' | xargs exiftool -all= -overwrite_original
+
 ```
 
 ### 2. Build the Release APK
