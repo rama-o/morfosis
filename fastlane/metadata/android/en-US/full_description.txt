@@ -1,0 +1,3 @@
+Morfosis is a simple and privacy-focused media converter built with Flutter.
+
+It uses FFmpeg to convert audio and video entirely on-device.
