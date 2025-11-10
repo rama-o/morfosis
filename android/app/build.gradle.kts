@@ -1,6 +1,12 @@
 import java.util.Properties
 import java.io.FileInputStream
 
+val envProperties = Properties()
+val envFile = rootProject.file(".env")
+if (envFile.exists()) {
+    envProperties.load(FileInputStream(envFile))
+}
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -11,6 +17,19 @@ android {
     namespace = "com.rama.morfosis"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
+
+		signingConfigs {
+        create("release") {
+					 fun getEnv(key: String): String =
+    envProperties[key]?.toString()?.takeIf { it.isNotBlank() }
+        ?: error("$key is missing in .env")
+
+storeFile = file(getEnv("KEYSTORE_PATH"))
+storePassword = getEnv("KEYSTORE_PASSWORD")
+keyAlias = getEnv("KEY_ALIAS")
+keyPassword = getEnv("KEY_PASSWORD")
+        }
+    }
 
     defaultConfig {
         applicationId = "com.rama.morfosis"
@@ -24,6 +43,7 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+						signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
