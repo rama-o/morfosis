@@ -1,4 +1,4 @@
-[![Morfosis](https://rama-o.github.io/img/preview-morfosis.webp)](https://morfosis-o.github.io)
+[![Morfosis](https://rama-o.github.io/img/preview-morfosis.webp)](https://rama-o.github.io)
 
 # 🌀 Morfosis
 
