@@ -42,7 +42,7 @@ class CustomRadioOption extends StatelessWidget {
               settingsNotifier.value = updater(settings, val);
             }
           },
-          fillColor: MaterialStateProperty.resolveWith<Color>((states) {
+          fillColor: WidgetStateProperty.resolveWith<Color>((states) {
             return colors.primary;
           }),
         );

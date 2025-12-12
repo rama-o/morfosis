@@ -83,7 +83,7 @@ class AppColors {
 class ColorsProvider extends InheritedWidget {
   final AppColors colors;
 
-  const ColorsProvider({required this.colors, required super.child});
+  const ColorsProvider({super.key, required this.colors, required super.child});
 
   static AppColors of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<ColorsProvider>()!.colors;

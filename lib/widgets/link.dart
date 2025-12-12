@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import './badge.dart';
 import '../utils/app_colors.dart';
 
 class CustomLink extends StatelessWidget {
