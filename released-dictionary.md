@@ -3,7 +3,7 @@
 
 ## Versions
 
-A — Atalanta / 25-12-14
+A — Atalanta / 25.12.12
 > (La “Vanessa atalanta”, muy común en Europa y América.)
 
 ---------------------------------------------------------
