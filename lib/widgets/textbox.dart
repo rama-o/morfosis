@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme.dart';
+import '../utils/app_colors.dart';
 
 class CustomTextbox extends StatelessWidget {
   final TextEditingController ctrl;
@@ -15,17 +15,19 @@ class CustomTextbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ColorsProvider.of(context);
+
     return Column(
       spacing: 16,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(color: foregroundColor)),
+        Text(label, style: TextStyle(color: colors.foreground)),
         TextField(
           controller: ctrl,
-          style: const TextStyle(color: foregroundColor),
+          style: TextStyle(color: colors.foreground),
           decoration: InputDecoration(
             filled: true,
-            fillColor: inputColor,
+            fillColor: colors.input,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 12,
               vertical: 8,

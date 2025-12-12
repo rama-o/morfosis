@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../theme.dart';
 import '../state/notifier.dart';
 import '../models/ui_settings.dart';
 import '../models/format_option.dart';
+import '../utils/app_colors.dart';
 
 class CustomRadioOption extends StatelessWidget {
   final FormatOption option;
@@ -18,6 +18,8 @@ class CustomRadioOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ColorsProvider.of(context);
+
     return ValueListenableBuilder<UiSettings>(
       valueListenable: settingsNotifier,
       builder: (context, settings, _) {
@@ -26,10 +28,10 @@ class CustomRadioOption extends StatelessWidget {
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(option.label, style: TextStyle(color: foregroundColor)),
+              Text(option.label, style: TextStyle(color: colors.foreground)),
               Text(
                 option.description,
-                style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+                style: TextStyle(fontSize: 12, color: colors.foreground),
               ),
             ],
           ),
@@ -41,8 +43,7 @@ class CustomRadioOption extends StatelessWidget {
             }
           },
           fillColor: MaterialStateProperty.resolveWith<Color>((states) {
-            if (states.contains(MaterialState.selected)) return checkedColor;
-            return uncheckedColor;
+            return colors.primary;
           }),
         );
       },

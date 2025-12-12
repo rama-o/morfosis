@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../theme.dart';
 import '../state/notifier.dart';
 import '../models/ui_settings.dart';
 import '../models/format_option.dart';
+import '../utils/app_colors.dart';
 
 class CustomCheckboxOption extends StatelessWidget {
   final FormatOption option;
@@ -18,6 +18,8 @@ class CustomCheckboxOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ColorsProvider.of(context);
+
     return ValueListenableBuilder<UiSettings>(
       valueListenable: settingsNotifier,
       builder: (context, settings, _) {
@@ -26,10 +28,10 @@ class CustomCheckboxOption extends StatelessWidget {
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(option.label, style: TextStyle(color: foregroundColor)),
+              Text(option.label, style: TextStyle(color: colors.foreground)),
               Text(
                 option.description,
-                style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+                style: TextStyle(fontSize: 12, color: colors.foreground),
               ),
             ],
           ),
@@ -39,8 +41,8 @@ class CustomCheckboxOption extends StatelessWidget {
               settingsNotifier.value = updater(settings, val);
             }
           },
-          activeColor: checkedColor,
-          checkColor: Colors.white,
+          activeColor: colors.input,
+          checkColor: colors.foreground,
           tileColor: Colors.transparent,
           controlAffinity: ListTileControlAffinity.leading,
         );

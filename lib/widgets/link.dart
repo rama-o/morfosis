@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import './badge.dart';
-import '../theme.dart';
+import '../utils/app_colors.dart';
 
 class CustomLink extends StatelessWidget {
   final String url;
@@ -24,13 +24,18 @@ class CustomLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _launchURL,
-      child: CustomBadge(
-        label: label,
-        icon: icon,
-        backgroundColor: accentColor2,
+    final colors = ColorsProvider.of(context);
+
+    return TextButton.icon(
+      onPressed: _launchURL,
+      style: TextButton.styleFrom(
+        backgroundColor: colors.secondary,
+        foregroundColor: colors.background,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
       ),
+      icon: Icon(icon, size: 22, color: colors.background),
+      label: Text(label),
     );
   }
 }

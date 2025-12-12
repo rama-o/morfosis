@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../theme.dart';
+import '../utils/app_colors.dart';
 
 class CustomBtnBase extends StatelessWidget {
   final Icon glyph;
   final String tooltip;
-  final Color accent;
+  final Color? accent;
   final VoidCallback action;
   final String? label;
   final bool isPrimary;
@@ -13,7 +13,7 @@ class CustomBtnBase extends StatelessWidget {
     super.key,
     required this.glyph,
     required this.tooltip,
-    required this.accent,
+    this.accent,
     required this.action,
     this.label,
     this.isPrimary = false,
@@ -21,6 +21,8 @@ class CustomBtnBase extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ColorsProvider.of(context);
+
     if (label == null) {
       return Tooltip(
         message: tooltip,
@@ -35,7 +37,7 @@ class CustomBtnBase extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             child: Icon(
               glyph.icon,
-              color: isPrimary ? bgColor : accent,
+              color: isPrimary ? colors.background : accent,
               size: glyph.size ?? 18,
             ),
           ),
@@ -45,8 +47,8 @@ class CustomBtnBase extends StatelessWidget {
 
     return TextButton.icon(
       style: TextButton.styleFrom(
-        backgroundColor: isPrimary ? accent : Colors.transparent,
-        foregroundColor: isPrimary ? bgColor : accent,
+        backgroundColor: isPrimary ? colors.primary : Colors.transparent,
+        foregroundColor: isPrimary ? colors.background : colors.primary,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
       ),

@@ -5,7 +5,7 @@ class CustomBtnSecondary extends CustomBtnBase {
     super.key,
     required super.glyph,
     required super.tooltip,
-    required super.accent,
+    super.accent,
     required super.action,
     super.label,
   }) : super(isPrimary: false);

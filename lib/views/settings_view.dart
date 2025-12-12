@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:morfosis/models/format_option.dart';
-import '../theme.dart';
 import '../state/notifier.dart';
 import '../models/ui_settings.dart';
 import '../utils/codec_mappings.dart';
@@ -9,6 +8,7 @@ import '../widgets/checkbox.dart';
 import '../widgets/button_secondary.dart';
 import '../widgets/section_title.dart';
 import '../widgets/textbox.dart';
+import '../utils/app_colors.dart';
 
 final suffixController = TextEditingController(
   text: settingsNotifier.value.outputSuffix,
@@ -25,6 +25,8 @@ class SettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ColorsProvider.of(context);
+
     return ValueListenableBuilder<UiSettings>(
       valueListenable: settingsNotifier,
       builder: (context, settings, _) {
@@ -42,7 +44,7 @@ class SettingsView extends StatelessWidget {
                     CustomBtnSecondary(
                       glyph: const Icon(Icons.close),
                       tooltip: 'Close Settings',
-                      accent: accentColor,
+                      accent: colors.primary,
 
                       action: () => navigateTo(0),
                     ),
@@ -51,13 +53,13 @@ class SettingsView extends StatelessWidget {
 
                 Text(
                   'Output Name',
-                  style: TextStyle(color: foregroundColor, fontSize: 18),
+                  style: TextStyle(color: colors.foreground, fontSize: 18),
                 ),
 
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: bgColor2,
+                    color: colors.backgroundSecondary,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Column(
@@ -95,12 +97,12 @@ class SettingsView extends StatelessWidget {
 
                 Text(
                   'Format',
-                  style: TextStyle(color: foregroundColor, fontSize: 18),
+                  style: TextStyle(color: colors.foreground, fontSize: 18),
                 ),
 
                 Container(
                   decoration: BoxDecoration(
-                    color: bgColor2,
+                    color: colors.backgroundSecondary,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: ValueListenableBuilder<UiSettings>(
@@ -126,12 +128,12 @@ class SettingsView extends StatelessWidget {
 
                 Text(
                   'Video Codec',
-                  style: TextStyle(color: foregroundColor, fontSize: 18),
+                  style: TextStyle(color: colors.foreground, fontSize: 18),
                 ),
 
                 Container(
                   decoration: BoxDecoration(
-                    color: bgColor2,
+                    color: colors.backgroundSecondary,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: ValueListenableBuilder<UiSettings>(
@@ -157,12 +159,12 @@ class SettingsView extends StatelessWidget {
 
                 Text(
                   'Audio Codec',
-                  style: TextStyle(color: foregroundColor, fontSize: 18),
+                  style: TextStyle(color: colors.foreground, fontSize: 18),
                 ),
 
                 Container(
                   decoration: BoxDecoration(
-                    color: bgColor2,
+                    color: colors.backgroundSecondary,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: ValueListenableBuilder<UiSettings>(

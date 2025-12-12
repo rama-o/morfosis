@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme.dart';
+import '../utils/app_colors.dart';
 
 class SectionTitle extends StatelessWidget {
   final String label;
@@ -8,6 +8,11 @@ class SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(label, style: TextStyle(color: foregroundColor, fontSize: 28));
+    final colors = ColorsProvider.of(context);
+
+    return Text(
+      label,
+      style: TextStyle(color: colors.foreground, fontSize: 28),
+    );
   }
 }

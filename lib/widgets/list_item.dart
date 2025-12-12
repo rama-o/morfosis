@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import '../theme.dart';
+// import '../theme.dart';
 import '../state/notifier.dart';
 import 'button_secondary.dart';
 import '../utils/file_utils.dart';
 import 'package:path/path.dart' as p;
+import '../utils/app_colors.dart';
 
 class ListItem extends StatelessWidget {
   final int id;
@@ -19,13 +20,14 @@ class ListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ColorsProvider.of(context);
     final name = p.basenameWithoutExtension(path);
     final inputFormat = p.extension(path).replaceFirst('.', '');
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: bgColor2,
+        color: colors.backgroundSecondary,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -38,23 +40,24 @@ class ListItem extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(name,
-                        style:
-                            TextStyle(color: foregroundColor, fontSize: 18)),
+                    Text(
+                      name,
+                      style: TextStyle(color: colors.foreground, fontSize: 18),
+                    ),
                     Text(
                       '$inputFormat → ${settingsNotifier.value.outputFormat}',
-                      style: TextStyle(color: foregroundColor),
+                      style: TextStyle(color: colors.foreground),
                     ),
                   ],
                 ),
               ),
               progress == 100
-                  ? Icon(Icons.check, color: succesColor, size: 24)
-                  : Icon(Icons.schedule, color: Colors.grey, size: 24),
+                  ? Icon(Icons.check, color: colors.success, size: 24)
+                  : Icon(Icons.schedule, color: colors.disabled, size: 24),
               CustomBtnSecondary(
                 glyph: const Icon(Icons.delete),
                 tooltip: 'Delete Item',
-                accent: dangerColor,
+                accent: colors.danger,
                 action: () => removeFile(path),
               ),
             ],

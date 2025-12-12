@@ -3,11 +3,11 @@ import '../widgets/empty_list.dart';
 import '../widgets/list_item.dart';
 import '../state/notifier.dart';
 import '../widgets/button_secondary.dart';
-import '../theme.dart';
 import '../widgets/section_title.dart';
 import '../utils/file_utils.dart';
 import '../widgets/prompt_output.dart';
 import '../models/file_item.dart';
+import '../utils/app_colors.dart';
 
 class QueueView extends StatelessWidget {
   final void Function(int) navigateTo;
@@ -16,6 +16,8 @@ class QueueView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = ColorsProvider.of(context);
+
     return SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -30,7 +32,7 @@ class QueueView extends StatelessWidget {
                 CustomBtnSecondary(
                   glyph: const Icon(Icons.add),
                   tooltip: 'Add Files',
-                  accent: accentColor,
+                  accent: colors.primary,
                   action: () async {
                     await pickAudioOrVideo();
                   },
@@ -38,33 +40,35 @@ class QueueView extends StatelessWidget {
                 CustomBtnSecondary(
                   glyph: const Icon(Icons.cleaning_services),
                   tooltip: 'Clear Queue',
-                  accent: accentColor,
+                  accent: colors.primary,
                   action: clearQueue,
                 ),
                 PopupMenuButton<int>(
-                  color: bgColor2,
-                  icon: const Icon(
-                    Icons.settings,
-                    size: 16,
-                    color: accentColor,
-                  ),
+                  color: colors.backgroundSecondary,
+                  icon: Icon(Icons.settings, size: 16, color: colors.primary),
                   tooltip: 'Navigate to section',
                   onSelected: (int value) {
                     navigateTo(value);
                   },
                   itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-                    const PopupMenuItem<int>(
+                    PopupMenuItem<int>(
                       value: 1,
                       child: Text(
                         'Settings',
-                        style: TextStyle(fontSize: 16, color: foregroundColor),
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: colors.foreground,
+                        ),
                       ),
                     ),
-                    const PopupMenuItem<int>(
+                    PopupMenuItem<int>(
                       value: 2,
                       child: Text(
                         'About',
-                        style: TextStyle(fontSize: 16, color: foregroundColor),
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: colors.foreground,
+                        ),
                       ),
                     ),
                   ],
@@ -84,10 +88,10 @@ class QueueView extends StatelessWidget {
               valueListenable: isLoadingFiles,
               builder: (context, loading, _) {
                 if (loading) {
-                  return const Padding(
+                  return Padding(
                     padding: EdgeInsets.symmetric(vertical: 16),
                     child: Center(
-                      child: CircularProgressIndicator(color: accentColor2),
+                      child: CircularProgressIndicator(color: colors.primary),
                     ),
                   );
                 }

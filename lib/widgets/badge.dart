@@ -1,51 +1,35 @@
 import 'package:flutter/material.dart';
-import '../theme.dart';
+import '../utils/app_colors.dart';
 
 class CustomBadge extends StatelessWidget {
   final String label;
   final IconData? icon;
-  final double iconSize;
-  final TextStyle? textStyle;
-  final Color? backgroundColor;
-  final EdgeInsets padding;
-  final double borderRadius;
 
-  const CustomBadge({
-    super.key,
-    required this.label,
-    this.icon,
-    this.iconSize = 22,
-    this.textStyle,
-    this.backgroundColor,
-    this.padding = const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-    this.borderRadius = 10,
-  });
+  const CustomBadge({super.key, required this.label, this.icon});
 
   @override
   Widget build(BuildContext context) {
-    final Color bg = backgroundColor ?? accentColor;
-    final TextStyle style =
-        textStyle ??
-        const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
-          color: Colors.black,
-        );
+    final colors = ColorsProvider.of(context);
 
     return Container(
-      padding: padding,
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(borderRadius),
+        color: colors.backgroundSecondary,
+        borderRadius: BorderRadius.circular(10),
       ),
+      width: double.infinity,
       child: Row(
-        mainAxisSize: MainAxisSize.min,
+        spacing: 16,
         children: [
-          if (icon != null) ...[
-            Icon(icon, size: iconSize, color: style.color),
-            const SizedBox(width: 4),
-          ],
-          Text(label, style: style),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: colors.backgroundTertiary,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, size: 22, color: colors.tertiary),
+          ),
+          Text(label, style: TextStyle(color: colors.tertiary)),
         ],
       ),
     );
