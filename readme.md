@@ -6,6 +6,8 @@
 
 Powered by **FFmpeg**, Morfosis lets you convert **audio and video files** between many formats, all processed locally on your device without any internet connection.
 
+![Morfosis Preview](https://raw.githubusercontent.com/rama-o/morfosis/main/morfosis-preview-min.webp)
+
 <p align="center">
 <a href="https://github.com/rama-o/morfosis/releases"><img alt="GitHub NewPipe releases" src="https://img.shields.io/github/release/rama-o/morfosis.svg" ></a>
 <a href="https://www.gnu.org/licenses/gpl-3.0"><img alt="License: GPLv3" src="https://img.shields.io/badge/License-GPL%20v3-blue.svg"></a>
