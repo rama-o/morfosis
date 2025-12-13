@@ -82,8 +82,8 @@ class AboutView extends StatelessWidget {
                     ),
 
                     CustomLink(
-                      url: 'https://github.com/rama-o/morfosis',
-                      label: 'github.com/rama-o/morfosis',
+                      url: 'https://github.com/jmiguelrivas/morfosis',
+                      label: 'github.com/jmiguelrivas/morfosis',
                       icon: Icons.monitor,
                     ),
                     CustomLink(
