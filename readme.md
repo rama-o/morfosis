@@ -6,10 +6,8 @@
 
 Powered by **FFmpeg**, Morfosis lets you convert **audio and video files** between many formats, all processed locally on your device without any internet connection.
 
-![Morfosis Preview](https://raw.githubusercontent.com/jmiguelrivas/morfosis/main/morfosis-preview-min.webp)
-
 <p align="center">
-<a href="https://github.com/jmiguelrivas/morfosis/releases"><img alt="GitHub Morfosis releases" src="https://img.shields.io/github/release/jmiguelrivas/morfosis.svg" ></a>
+<a href="https://github.com/jmiguelrivas/morfosis/releases"><img alt="GitHub Morfosis releases" src="https://img.shields.io/github/release/jmiguelrivas/morfosis.svg"></a>
 <a href="https://www.gnu.org/licenses/gpl-3.0"><img alt="License: GPLv3" src="https://img.shields.io/badge/License-GPL%20v3-blue.svg"></a>
 <a href="https://github.com/jmiguelrivas/morfosis/actions"><img alt="Build Status" src="https://github.com/jmiguelrivas/morfosis/actions/workflows/test.yml/badge.svg?branch=main&event=push"></a>
 </p>
@@ -20,7 +18,7 @@ Powered by **FFmpeg**, Morfosis lets you convert **audio and video files** betwe
 
 ```bash
 flutter run
-```
+````
 
 or to restart and run:
 
@@ -39,22 +37,56 @@ Morfosis needs the following permissions:
 
 ---
 
+## 🎥 Supported Video Formats & Codecs
+
+| Format | Description                                  | Codecs                          |
+| ------ | -------------------------------------------- | ------------------------------- |
+| mp4    | Most compatible video format                 | Keep Original, libx264, libx265 |
+| avi    | Legacy format, widely supported              | Keep Original, libx264          |
+| mov    | Apple QuickTime format                       | Keep Original, libx264, libx265 |
+| webm   | Web-friendly format                          | Keep Original, libx264          |
+| mkv    | Advanced container, supports multiple codecs | Keep Original, libx264, libx265 |
+| flv    | Streaming format                             | Keep Original, libx264          |
+| 3gp    | Mobile-friendly, legacy phones               | Keep Original, mpeg4, h263      |
+| 3g2    | 3GPP2 format, CDMA networks                  | Keep Original, mpeg4, h263      |
+
+---
+
+## 🎵 Supported Audio Formats & Codecs
+
+| Format | Description                     | Codecs                                        |
+| ------ | ------------------------------- | --------------------------------------------- |
+| mp3    | Most compatible audio format    | Keep Original, libmp3lame                     |
+| m4a    | Apple-friendly audio format     | Keep Original, aac                            |
+| wav    | Uncompressed audio              | Keep Original, pcm_s16le                      |
+| flac   | Lossless audio format           | Keep Original, flac                           |
+| ogg    | Open source audio format        | Keep Original, aac                            |
+| mp4    | Most compatible video container | Keep Original, aac, libmp3lame, ac3           |
+| avi    | Legacy video container          | Keep Original, libmp3lame, ac3, pcm_s16le     |
+| mov    | Apple QuickTime video container | Keep Original, aac, libmp3lame, pcm_s16le     |
+| webm   | Web-friendly container          | Keep Original, aac                            |
+| mkv    | Advanced container              | Keep Original, aac, ac3, libmp3lame, flac     |
+| flv    | Streaming container             | Keep Original, aac, libmp3lame                |
+| 3gp    | Mobile legacy container         | Keep Original, aac, libopencore_amrnb, amr_wb |
+| 3g2    | CDMA legacy container           | Keep Original, aac, libopencore_amrnb, amr_wb |
+
+---
+
 ## 🏗️ Build Instructions
 
-### 1. Remove IMGs metadata
-
-```bash
-find . -name '*.jpg' -o -name '*.jpeg' -o -name '*.png' | xargs exiftool -all= -overwrite_original
-
-```
-
-### 2. Build the Release APK
+### Build the Release APK
 
 ```bash
 flutter build apk --release
 ```
 
-### 3. Test the Release Build
+### Build the Release APK for individual architectures
+
+```bash
+flutter build apk --split-per-abi
+```
+
+### Test the Release Build
 
 ```bash
 adb uninstall com.rama.morfosis && flutter run --release -v
