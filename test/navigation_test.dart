@@ -24,7 +24,7 @@ void main() {
     await tester.tap(find.text('About'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Ads: No'), findsOneWidget);
+    expect(find.text('No Ads'), findsOneWidget);
     await tester.tap(find.byIcon(Icons.close));
     await tester.pumpAndSettle();
 

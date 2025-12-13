@@ -25,6 +25,6 @@ Future<String> buildComando() async {
     '<FILE_PATH>',
     videoCodec,
     audioCodec,
-    '"${output}"',
+    '"$output"',
   ].where((e) => e.isNotEmpty).join(' ');
 }
