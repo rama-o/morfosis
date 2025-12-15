@@ -25,16 +25,21 @@ class CustomLink extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = ColorsProvider.of(context);
 
-    return TextButton.icon(
-      onPressed: _launchURL,
-      style: TextButton.styleFrom(
-        backgroundColor: colors.secondary,
-        foregroundColor: colors.background,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+    return SizedBox(
+      width: double.infinity,
+      child: TextButton.icon(
+        onPressed: _launchURL,
+        style: TextButton.styleFrom(
+          backgroundColor: colors.secondary,
+          foregroundColor: colors.background,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+          ),
+        ),
+        icon: Icon(icon, size: 22, color: colors.background),
+        label: Text(label),
       ),
-      icon: Icon(icon, size: 22, color: colors.background),
-      label: Text(label),
     );
   }
 }

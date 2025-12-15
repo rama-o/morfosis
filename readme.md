@@ -12,18 +12,20 @@ Powered by **FFmpeg**, Morfosis lets you convert **audio and video files** betwe
 <a href="https://github.com/jmiguelrivas/morfosis/actions"><img alt="Build Status" src="https://github.com/jmiguelrivas/morfosis/actions/workflows/test.yml/badge.svg?branch=main&event=push"></a>
 </p>
 
----
+## • Screenshots
 
-## 🔐 Permissions
+| Queue (Empty) | Queue | Settings | About |
+|---------------|-------|----------|-------|
+| ![Queue Empty](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png) | ![Queue](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png) | ![Settings](fastlane/metadata/android/en-US/images/phoneScreenshots/3.png) | ![About](fastlane/metadata/android/en-US/images/phoneScreenshots/4.png) |
+
+## • Permissions
 
 Morfosis needs the following permissions:
 
 * **Device Storage / Gallery** – to pick and access your media files
 * **Notifications** – to show when batch conversions start and finish
 
----
-
-## 🎥 Supported Video Formats & Codecs
+## • Supported Video Formats & Codecs
 
 | Format | Description                                  | Codecs                          |
 | ------ | -------------------------------------------- | ------------------------------- |
@@ -36,9 +38,7 @@ Morfosis needs the following permissions:
 | 3gp    | Mobile-friendly, legacy phones               | mpeg4, h263      |
 | 3g2    | 3GPP2 format, CDMA networks                  | mpeg4, h263      |
 
----
-
-## 🎵 Supported Audio Formats & Codecs
+## • Supported Audio Formats & Codecs
 
 | Format | Description                     | Codecs                                        |
 | ------ | ------------------------------- | --------------------------------------------- |
@@ -56,15 +56,12 @@ Morfosis needs the following permissions:
 | 3gp    | Mobile legacy container         | aac, libopencore_amrnb, amr_wb |
 | 3g2    | CDMA legacy container           | aac, libopencore_amrnb, amr_wb |
 
----
 
-## 📦 Installation from source
+## • Installation from source
 
 See the [Installation guide](installation.md) for setup instructions.
 
----
-
-## 🧾 License
+## • License
 
 [![GNU GPLv3 Image](https://www.gnu.org/graphics/gplv3-127x51.png)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 

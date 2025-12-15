@@ -45,16 +45,21 @@ class CustomBtnBase extends StatelessWidget {
       );
     }
 
-    return TextButton.icon(
-      style: TextButton.styleFrom(
-        backgroundColor: isPrimary ? colors.primary : Colors.transparent,
-        foregroundColor: isPrimary ? colors.background : colors.primary,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+    return SizedBox(
+      width: double.infinity,
+      child: TextButton.icon(
+        style: TextButton.styleFrom(
+          backgroundColor: isPrimary ? colors.primary : Colors.transparent,
+          foregroundColor: isPrimary ? colors.background : colors.primary,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+          ),
+        ),
+        onPressed: action,
+        icon: glyph,
+        label: Text(label!),
       ),
-      onPressed: action,
-      icon: glyph,
-      label: Text(label!),
     );
   }
 }
